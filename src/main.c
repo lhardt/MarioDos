@@ -7,12 +7,18 @@
  * Este arquivo contém o loop principal do jogo.
  */
 #include <raylib.h>
+#include <stdio.h>
 
 #include "jogo.h"
 
 int main(void) {
     Jogo j;
-    jogo_inicia(&j);
+    bool sucesso = jogo_inicia(&j);
+
+    if(! sucesso ){
+        printf("Saindo sem sucesso...\n");
+        return -1;
+    }
 
     while (!WindowShouldClose()) {
         jogo_entrada(&j);

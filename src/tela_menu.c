@@ -8,7 +8,8 @@
  * é nesta tela em que o jogo inicia, e nela o usuário pode
  * escolher jogar, carregar mapas, etc.
  */
-#include "telas.h"
+#include "jogo.h"
+#include "textura.h"
 
 #include <stdlib.h>
 
@@ -75,6 +76,8 @@ void telamenu_desenha(Jogo * j){
 	DrawText("Ajuda", 190, 320, 20, tela->cores[tela->options[4]]);
 	DrawText("Sobre", 190,350, 20, tela->cores[tela->options[5]]);
 	DrawText("Sair", 190, 380, 20, tela->cores[tela->options[6]]);
+
+	textura_desenha(j, T_LOGO, (Vector2){.x=500, .y=50});
 }
 
 void telamenu_entrada(Jogo * j){
@@ -89,7 +92,7 @@ void telamenu_entrada(Jogo * j){
 }
 
 void telamenu_logica(Jogo * j){
-
+	// Animação de início caberia aqui.
 }
 
 void telamenu_termina(Jogo * j){

@@ -18,6 +18,25 @@ typedef enum Tela {
 	TELA_NENHUMA
 } Tela;
 
+enum SoundId {
+	// NOTE: isso só nos ajuda a encontrar bugs mais rápido,
+	// porque algo não inicializado geralmente vai ser 0
+	// mas antes de entregar podemos tirar.
+	S_NONE = 0,
+	S_AGUA,
+	S_DANO,
+	S_INICIO,
+	S_PULO,
+	S_MENU_SELECT,
+	S_MENU_SETA,
+	S_MOEDA,
+	S_GAMEOVER,
+	S_MARIODIE,
+	S_VIRAR,
+
+	N_SONS
+};
+
 /* Todas as informações que são pertinentes somente a uma tela
  * deverão, idealmente, estar na estrutura da tela correspondente.
  * Cada uma dessas estruturas pode ser encontrada em seu respectivo
@@ -32,6 +51,9 @@ typedef struct Jogo {
 	int			janela_altura;
 
 	Font 		fonte_menu;
+	Sound		sons[N_SONS];
+
+	Texture		spritesheet;
 
 	Tela		tipo_tela;
 
