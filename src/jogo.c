@@ -107,7 +107,10 @@ void tela_inicia(Jogo * j){
 		case TELA_MENU:
 			telamenu_inicia(j);
 			break;
-		// ...
+        case TELA_JOGO:
+            telajogo_inicia(j);
+            break;
+        // ...
 		default: break;
 	}
 }
@@ -116,6 +119,9 @@ void tela_desenha(Jogo * j){
 		case TELA_MENU:
 			telamenu_desenha(j);
 			break;
+        case TELA_JOGO:
+            telajogo_desenha(j);
+            break;
 		// ...
 		default: break;
 	}
@@ -125,6 +131,9 @@ void tela_entrada(Jogo * j){
 		case TELA_MENU:
 			telamenu_entrada(j);
 			break;
+        case TELA_JOGO:
+            telajogo_entrada(j);
+            break;
 		// ...
 		default: break;
 	}
@@ -134,6 +143,9 @@ void tela_logica(Jogo * j){
 		case TELA_MENU:
 			telamenu_logica(j);
 			break;
+        case TELA_JOGO:
+            telajogo_logica(j);
+            break;
 		// ...
 		default: break;
 	}
@@ -143,6 +155,9 @@ void tela_termina(Jogo * j){
 		case TELA_MENU:
 			telamenu_termina(j);
 			break;
+        case TELA_JOGO:
+            telajogo_termina(j);
+            break;
 		// ...
 		default: break;
 	}

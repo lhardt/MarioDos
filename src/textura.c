@@ -18,6 +18,7 @@ Rectangle get_spritesheet_pos(TexturaId textura){
 
 void textura_desenha(Jogo * j, TexturaId textura, Vector2 pos){
 	// TODO: é mais útil pra gente usar x,y como coordenada
-	// do canto superior-esq do objeto ou como o centro dele?
+	// do canto superior-esq do objeto ou como o centro dele? acho que centro, porque na hora de verificar
+	// se tal coisa encostou em tal acho mais fácil se basear no centro (?)
 	DrawTextureRec(j->spritesheet, get_spritesheet_pos(textura), pos, WHITE);
 }

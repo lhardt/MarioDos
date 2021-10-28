@@ -19,7 +19,7 @@
 #define TELA_LARGURA (1200)
 /* Dados na especificação, pg. 5 */
 #define FASE_ALTURA (28)
-#define FASE_LARGURA (121)
+#define FASE_LARGURA (120)
 /* Definidos na especificação, pg. 5 */
 #define TILE_LARGURA (25)  /* Equivalentemente, (TELA_LARGURA / FASE_LARGURA) */
 #define TILE_ALTURA (210)  /* Equivalentemente, (TELA_ALTURA  / FASE_ALTURA ) */
@@ -113,6 +113,8 @@ void sons_termina(Jogo * j);
 
 bool fases_inicia(Jogo * j);
 void fases_termina(Jogo * j);
+void fases_desenha(Fase * f);
+bool load_fases(Fase* f, char* arquivo);
 
 /**
  * Funções que 'repassam' para a tela atual uma chamada.
@@ -139,7 +141,7 @@ void telamenu_entrada(Jogo * j);
 void telamenu_logica(Jogo * j);
 void telamenu_termina(Jogo * j);
 
-void telamenu_inicia(Jogo * j);
+void telajogo_inicia(Jogo * j);
 void telajogo_desenha(Jogo * j);
 void telajogo_entrada(Jogo * j);
 void telajogo_logica(Jogo * j);

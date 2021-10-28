@@ -2,6 +2,7 @@
 #define ASSERT_H
 
 #include <stdio.h>
+#include <stdio.h>
 
 // Funções de conveniência para erros de programação (principalmente 'chamou com parâmetros errados').
 // Essas funções dão nome do arquivo e número da linha para ajudar.

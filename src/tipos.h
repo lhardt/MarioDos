@@ -16,6 +16,7 @@ typedef enum Tela {
 	TELA_JOGO,
 	TELA_HIGHSCORE,
 	TELA_NENHUMA
+	//TELA AJUDA/SOBRE
 } Tela;
 
 enum SoundId {
