@@ -9,6 +9,7 @@
  */
 #include "jogo.h"
 #include "recursos.h"
+#include "assert.h"
 
 #include <string.h>
 
@@ -72,30 +73,39 @@ void fonte_termina(Jogo * j){
 	UnloadFont(j->fonte_menu);
 }
 
+bool som_inicia(Sound * retval, const char * const file){
+	ASSERT(retval != NULL && file != NULL);
+	*retval = LoadSound(file);
+
+	return retval->stream.buffer != NULL;
+}
+
 bool sons_inicia(Jogo * j){
-	j->sons[S_AGUA] = LoadSound(CAMINHO_SONS "agua.wav");
-	j->sons[S_DANO] = LoadSound(CAMINHO_SONS "dano.wav");
-	j->sons[S_INICIO] = LoadSound(CAMINHO_SONS "inicio.wav");
-	j->sons[S_PULO] = LoadSound(CAMINHO_SONS "pulo.wav");
-	j->sons[S_MENU_SELECT] = LoadSound(CAMINHO_SONS "sel_menu.wav");
-	j->sons[S_MENU_SETA] = LoadSound(CAMINHO_SONS "agua.wav");
-	j->sons[S_MOEDA] = LoadSound(CAMINHO_SONS "smb_coin.wav");
-	j->sons[S_GAMEOVER] = LoadSound(CAMINHO_SONS "smb_gameover.wav");
-	j->sons[S_MARIODIE] = LoadSound(CAMINHO_SONS "smb_mariodie.wav");
-	j->sons[S_VIRAR] = LoadSound(CAMINHO_SONS "virar.wav");
-	return true;
+	InitAudioDevice();
+	return IsAudioDeviceReady()
+		&& som_inicia(& j->sons[S_AGUA], CAMINHO_SONS "agua.wav")
+		&& som_inicia(& j->sons[S_DANO], CAMINHO_SONS "dano.wav")
+		&& som_inicia(& j->sons[S_INICIO], CAMINHO_SONS "inicio.wav")
+		&& som_inicia(& j->sons[S_PULO], CAMINHO_SONS "pulo.wav")
+		&& som_inicia(& j->sons[S_MENU_SELECT], CAMINHO_SONS "sel_menu.mp3")
+		&& som_inicia(& j->sons[S_MENU_SETA], CAMINHO_SONS "seta_menu.wav")
+		&& som_inicia(& j->sons[S_MOEDA], CAMINHO_SONS "smb_coin.wav")
+		&& som_inicia(& j->sons[S_GAMEOVER], CAMINHO_SONS "smb_gameover.wav")
+		&& som_inicia(& j->sons[S_MARIODIE], CAMINHO_SONS "smb_mariodie.wav")
+		&& som_inicia(& j->sons[S_VIRAR], CAMINHO_SONS "virar.wav");
 }
 
 void sons_termina(Jogo * j){
 	for(int i = 0; i < N_SONS; ++i){
-		UnloadSound(j->sons[i]);
+		if(j->sons[i].stream.buffer != NULL)
+			UnloadSound(j->sons[i]);
 	}
 }
 
 bool imagens_inicia(Jogo * j){
 	j->spritesheet = LoadTexture(CAMINHO_SPRITESHEET);
 	// TODO: não temos uma forma de ver se carregou corretamente?
-	return true;
+	return j->spritesheet.format != 0;
 }
 void imagens_termina(Jogo * j){
 	UnloadTexture(j->spritesheet);

@@ -10,27 +10,64 @@
  */
 #include "jogo.h"
 #include "textura.h"
+#include "assert.h"
 
 #include <stdlib.h>
 #include <stdio.h> // TEMPORARIO PRA DEBUG
 
 #define OPTIONS 7
 
+typedef enum TelaMenuOption {
+	O_CONTINUAR = 0,
+	O_CARREGAR_MAPA,
+	O_RANKING,
+	O_AJUDA,
+	O_SOBRE,
+	O_SAIR,
+	N_OPTIONS,
+} TelaMenuOption;
+
 struct TelaMenuInfo {
 	Color cores[2];
 	int options[10];
-	int selecionada;
+	TelaMenuOption selecionada;
 };
 
-Tela escolheTela(int selecionada){
-    switch (selecionada){ //ADICIONAR OUTRAS TELAS
-        case 0: return TELA_JOGO;
-        break;
+// NOTE: Antigo escolheTela(). Não sei se o que eu fiz é o melhor modelo
+// Mas se fossemos divorciar o handling do 'escolheTela', acabaríamos tendo
+// que verificar se opcao == O_SAIR duas vezes.
+void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
+    switch (opcao){
+        case O_CONTINUAR:
+			jogo_troca_tela(j, TELA_JOGO);
+		case O_CARREGAR_MAPA:
+		case O_RANKING:
+		case O_AJUDA:
+		case O_SOBRE:
+			TODO();
+			break;
+		case O_SAIR:
+			// A: O QUE A GENTE VAI FAZER NO FIM? EXIBER ALGUMA TELA "ADEUS" OU SÒ FECHAR?
+			// L: 'trabalhos futuros'? kkkkkkk
+
+			// Fazer uma animação é meio complicadinho. Da forma que eu vejo, dá pra
+			// fazer um float que represente a % da animação, e a cada frame (a cada
+			// telaxxx_logica), incrementar esse valor, e parar quando ele chegar a 100.
+			// Ai no desenha, fazer tipo:
+			// 			mario.y = marioy_inicial + (animacao.passo) * (marioy_final - marioy_inicial)
+			// Mas por enquanto, é uma mão KKK
+
+			j->sair=true;
+			break;
+		default:
+			ASSERT(false /* ? */);
+	        break;
     }
-    return TELA_JOGO;//TIRAR DPS
+
+	ASSERT(false /* Opção inválida */);
 }
 
-void trocarSelecionada(int upDown, int *options, int *selecionada){
+void trocarSelecionada(int upDown, int *options, TelaMenuOption *selecionada){
     /*int selecionada = -1;
 
     for (int x=0; x<OPTIONS && selecionada==-1;x++ ){
@@ -77,37 +114,26 @@ void telamenu_desenha(Jogo * j){
 	ClearBackground(BLACK);
 
 	Vector2 pos;
-	pos.x = 190;
-	pos.y = 200;
+	pos.x = TELA_LARGURA / 2;
+	pos.y = 300;
 
 	TelaMenuInfo * tela = j->tela_menu;
 
-		char * text;
-
 	// NOTE: isso pode ser feito com um FOR. Cada elemento fica a uma altura fixa dos outros.
+	char * texts[] = {"Continuar", "Carregar mapa", "Ranking", "Ajuda", "Sobre", "Sair", "" };
 	for (int x=0; x< OPTIONS; x++){
-            pos.y +=30;
-    // Tried to, didn't work : char texts[][] = {"Continuar", "Carregar mapa", "Ranking", "Ajuda", "Sobre", "Sair" };, so:
-        switch (x){
-            case 0: text =  "Novo jogo";
-            break;
-            case 1: text =  "Continuar";
-            break;
-            case 2: text =  "Carregar mapa";
-            break;
-            case 3: text =  "Ranking";
-            break;
-            case 4: text =  "Ajuda";
-            break;
-            case 5: text =  "Sobre";
-            break;
-            case 6: text =  "Sair";
-            break;
-        }
-        DrawTextEx(j->fonte_menu, text, pos, 20, 5, tela->cores[tela->options[x]]);
+        pos.y +=40;
+		texto_centralizado(j->fonte_menu, texts[x], pos, tela->cores[tela->options[x]]);
 	}
 
-	textura_desenha(j, T_LOGO, (Vector2){.x=500, .y=50});
+	pos.x = TELA_LARGURA / 2;
+	pos.y = TELA_ALTURA - 50;
+	texto_centralizado(GetFontDefault(), "Algorítmos e Programação.", pos, WHITE);
+	pos.y += 20;
+	texto_centralizado(GetFontDefault(), "Ana Laura & Léo Hardt.", pos, WHITE);
+
+	textura_desenha(j, T_LOGO, (Vector2){.x=TELA_LARGURA/2, .y=150});
+	// textura_desenha(j, T_LOGO, (Vector2){.x=500, .y=50});
 }
 
 void telamenu_entrada(Jogo * j){
@@ -120,11 +146,7 @@ void telamenu_entrada(Jogo * j){
 		trocarSelecionada(1, tela->options, &(tela->selecionada));
 	}
 	else if(IsKeyPressed(KEY_ENTER)){
-         //Se não for "sair"
-        if (tela->selecionada!= OPTIONS-1){ //CRIAR CONSTANTES?
-            jogo_troca_tela(j, escolheTela(tela->selecionada));
-        }
-        // O QUE A GENTE VAI FAZER NO FIM? EXIBER ALGUMA TELA "ADEUS" OU SÒ FECHAR?
+		menu_opcao_selecionada(j, tela->selecionada);
 
     }
 }

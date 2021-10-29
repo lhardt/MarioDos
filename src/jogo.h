@@ -19,10 +19,10 @@
 #define TELA_LARGURA (1200)
 /* Dados na especificação, pg. 5 */
 #define FASE_ALTURA (28)
-#define FASE_LARGURA (120)
+#define FASE_LARGURA (121)
 /* Definidos na especificação, pg. 5 */
-#define TILE_LARGURA (25)  /* Equivalentemente, (TELA_LARGURA / FASE_LARGURA) */
-#define TILE_ALTURA (210)  /* Equivalentemente, (TELA_ALTURA  / FASE_ALTURA ) */
+#define TILE_LARGURA (10)  /* Equivalentemente, (TELA_LARGURA / FASE_LARGURA) */
+#define TILE_ALTURA  (25)  /* Equivalentemente, (TELA_ALTURA  / FASE_ALTURA ) */
 
 /* Definidos nas especificaçoes 3.2 (pg.4) 3.13 (pg.5) */
 #define HIGHSCORES_NUM (5)
@@ -71,18 +71,30 @@ typedef struct Inimigo {
 	* do tipo e do level, não precisamos dela aqui.  */
 } Inimigo;
 
+typedef struct Vector2f {
+	double x,y;
+} Vector2f;
+
+typedef struct Mario {
+	Vector2f pos;
+
+	int score;
+	int vidas;
+} Mario;
 
 typedef struct Fase {
-	char mapa[FASE_LARGURA][FASE_ALTURA];
+	char mapa[FASE_ALTURA + 1][FASE_LARGURA + 1];
 
-	int pontuacao;
-	int vida;
+	Mario mario;
 
 	int n_moedas;
 	Moeda moedas[NMAX_MOEDAS];
 
 	int n_inimigos;
 	Inimigo inimigos[NMAX_INIMIGOS];
+
+	// vindo diretamente do arquivo
+	int n_carangueijos, n_tartarugas, delay;
 } Fase;
 
 

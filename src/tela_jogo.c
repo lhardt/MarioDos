@@ -2,11 +2,11 @@
  * MarioDos.
  *   tela_jogo.c - tela de jogo do jogo.
  *
- * (C) 2021 Ana Laura e Léo Hardt.
+ * (C) 2021 Ana Laura e Lï¿½o Hardt.
  *
- * Este arquivo contém as definições da tela de jogo do jogo.
- * é nesta tela em que o mapa do jogo é montado e o usuário pode
- * começar a jogar.
+ * Este arquivo contï¿½m as definiï¿½ï¿½es da tela de jogo do jogo.
+ * ï¿½ nesta tela em que o mapa do jogo ï¿½ montado e o usuï¿½rio pode
+ * comeï¿½ar a jogar.
  */
 #include "jogo.h"
 #include "textura.h"
@@ -21,33 +21,24 @@ struct TelaJogoInfo {
 };
 
 void telajogo_inicia(Jogo * j){
-	// NOTE: a função calloc garante que tudo será
-	// inicializado com 0000, então todas as outras
-	// opções estarão em branco.
+	// NOTE: a funÃ§Ã£o calloc garante que tudo serÃ¡
+	// inicializado com 0000, entÃ£o todas as outras
+	// opÃ§Ãµes estarÃ£o em branco.
 	j->tela_jogo = calloc(1, sizeof(TelaJogoInfo));
-	j->tela_jogo->nMapa = 0;// Depois tem que mudar pra funcionar com os jogos carregados, mas por padrão começa em 0
+	j->tela_jogo->nMapa = 0;// Depois tem que mudar pra funcionar com os jogos carregados, mas por padrï¿½o comeï¿½a em 0
+
+    load_fases(& j->tela_jogo->fase, "fase1.txt");
+
 }
 
 void telajogo_desenha(Jogo * j){
 	ClearBackground(BLACK);
 
-	//Vector2 pos;
-	//pos.x = 190;
-	//pos.y = 200;
+    fases_desenha(& j->tela_jogo->fase);
 
-	//TelaJogoInfo *tela = j->tela_jogo;
-	Fase *fase = &j->tela_jogo->fase;
-
-	if (load_fases(fase, "fase1.txt")){
-        fases_desenha(fase);
-	}///Teste carregando só a fase 1
-
-
-
-    //DrawTextEx(j->fonte_menu, text, pos, 20, 5, tela->cores[tela->options[x]]);
-
-
-	textura_desenha(j, T_LOGO, (Vector2){.x=500, .y=50});
+    Mario * mario = & j->tela_jogo->fase.mario;
+    Vector2 pos_mario = posfloat_para_tela(mario->pos);
+    textura_desenha(j, T_MARIO1, (Vector2){.x=150, .y=190});
 }
 
 void telajogo_entrada(Jogo * j){

@@ -16,74 +16,62 @@
 // carrega os conteúdos do arquivo em f
 bool load_fases(Fase * f, char * arquivo){
 	ASSERT(f != NULL && arquivo != NULL);
-	//TEMPORIARIO
-    char * enderecoFase = malloc(strlen(CAMINHO_FASES)+ strlen(arquivo)+1);
 
-    sprintf(enderecoFase, "%s%s", CAMINHO_FASES, arquivo);
+	// O endereço é o caminho + nome do arquivo.
+	char * tmp = malloc(strlen(CAMINHO_FASES) + strlen(arquivo)+1);
+    sprintf(tmp, "%s%s", CAMINHO_FASES, arquivo);
+	FILE * entrada = fopen(tmp, "r");
+	free(tmp);
 
-    FILE * entrada = fopen(enderecoFase, "r");
-
-    if (entrada == NULL){ printf ("Arquivo não encontrado"); }
-    char teste[3];
-
-    while(!feof(entrada)){
-        for (int x=0; x<FASE_ALTURA+1; x++){
-                //printf("\n x %d", x);
-            if (x == FASE_ALTURA){
-                    //printf ("entrou aqui");
-                fscanf(entrada, "%5[^\n]\n", teste);//fscanf(entrada, );// PEGAR OS TRES NUMEROS DO FIM
-                //printf("\nteste Q%sQ", teste);
-            }
-            else{
-                fscanf(entrada, "%120[^\n]\n", f->mapa[x]);
-                //printf("\nx%d%sf", x, f->mapa[x]);
-            }
-
-            //printf("\n%s", f->mapa[x]);
+	if (entrada == NULL){
+		printf ("Arquivo não encontrado.\n");
+	}
+	// Lê o arquivo
+    if(!feof(entrada)){
+        for (int i_linha=0; i_linha < FASE_ALTURA; ++i_linha){
+			for(int i_char = 0; i_char < FASE_LARGURA; ++i_char ){
+				f->mapa[i_linha][i_char] = fgetc(entrada);
+			}
         }
+		fscanf(entrada, "%d %d %d\n", &f->n_tartarugas, &f->n_carangueijos, &f->delay);
+    }
 
-    }
-    for (int x =0;x<FASE_ALTURA;x++){
-        printf("\ni%sf", f->mapa[x]);
-    }
+	// Configura o Mario
+	f->mario.vidas = 3;
+	f->mario.score = 0;
+	f->mario.pos = (Vector2f) {5.0, 2.0};
+
 
 	return true;
 }
 
+void tile_desenha(int x, int y, Color cor){
+	DrawRectangle(x * TILE_LARGURA, y * TILE_ALTURA, TILE_LARGURA, TILE_ALTURA, cor);
+}
+
+Color tile_para_cor(char c){
+	switch(c){
+		case '-': return BLACK;
+		case 'p': return BLUE;
+		case 'm': return RED;
+	}
+	return BLACK;
+}
+
 void fases_desenha(Fase * f){
-
-
-
-    Vector2 pos;
-	pos.x = 0;
-	pos.y = 0;
-    printf("linha%sfim", f->mapa[0]);
-	/*for (int x =0;x<FASE_ALTURA;x++){
-            printf("\n");
-        for (int y; y<FASE_LARGURA;y++){
-            printf("%s", f->mapa[x][y]);
-        }
-	}*/
-    for (int x=0; x<FASE_ALTURA; x++){
-            //printf("\n");
-        for (int y=0; y< FASE_LARGURA; y++){
-            if(f->mapa[x][y]=='-'){
-                //printf("test1");
-                DrawRectangle(pos.x, pos.y, TILE_LARGURA, TILE_ALTURA, GREEN);
-            }
-            else if(f->mapa[x][y]=='p'){
-
-                DrawRectangle(pos.x, pos.y, TILE_LARGURA, TILE_ALTURA, BLUE);
-            }
-            else if(f->mapa[x][y]=='s'){
-                DrawRectangle(pos.x, pos.y, TILE_LARGURA, TILE_ALTURA, RED);
-            }
-            //printf("%c", f->mapa[x][y]);
-            pos.y += TILE_LARGURA;
-        }
-
-        pos.y=0;
-        pos.x+= TILE_ALTURA;
+	// /* Teste: desenha as 4 bordas da tela. */
+	// for(int i = 0; i < FASE_ALTURA; ++i){
+	// 	tile_desenha(0,i, RED);
+	// 	tile_desenha(119,i, RED);
+	// }
+	// for(int i = 0; i < FASE_LARGURA; ++i){
+	// 	tile_desenha(i,0, RED);
+	// 	tile_desenha(i,27, RED);
+	// }
+    for (int y=0; y < FASE_ALTURA; y++){
+		for (int x=0; x<FASE_LARGURA; x++){
+			tile_desenha(x,y, tile_para_cor(f->mapa[y][x]));
+	    }
     }
 }
 

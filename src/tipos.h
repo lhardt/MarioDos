@@ -20,11 +20,7 @@ typedef enum Tela {
 } Tela;
 
 enum SoundId {
-	// NOTE: isso só nos ajuda a encontrar bugs mais rápido,
-	// porque algo não inicializado geralmente vai ser 0
-	// mas antes de entregar podemos tirar.
-	S_NONE = 0,
-	S_AGUA,
+	S_AGUA = 0,
 	S_DANO,
 	S_INICIO,
 	S_PULO,
@@ -58,6 +54,8 @@ typedef struct Jogo {
 
 	Tela		tipo_tela;
 
+	// Se o jogo deve fechar no próximo loop.
+	bool		sair;
 	// Qualquer informação que a tela atual queira guardar
 	// ficaria aqui. Para a tela menu, por exemplo, pode ser
 	// a opção do menu selecionada.

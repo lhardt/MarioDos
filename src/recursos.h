@@ -20,6 +20,6 @@
 #define CAMINHO_IMAGENS "resources/imagens/"
 #define CAMINHO_SPRITESHEET (CAMINHO_IMAGENS "sprite_geral.png")
 
-#define CAMINHO_SONS "resources/sons/"
+#define CAMINHO_SONS "resources/som/"
 
 #endif /* RECURSOS_H */

@@ -20,7 +20,7 @@ int main(void) {
         return -1;
     }
 
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && !j.sair) {
         jogo_entrada(&j);
         jogo_logica(&j);
 
