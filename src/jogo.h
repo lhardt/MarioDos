@@ -77,6 +77,8 @@ typedef struct Vector2f {
 
 typedef struct Mario {
 	Vector2f pos;
+	float velocidadeX;
+	float velocidadeY;
 
 	int score;
 	int vidas;
