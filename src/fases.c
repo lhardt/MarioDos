@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 #include "jogo.h"
+#include "textura.h"
 #include "assert.h"
-#include "tipos.h"
 
 #include "recursos.h"// temporario
 #include <unistd.h>
@@ -39,8 +39,7 @@ bool load_fases(Fase * f, char * arquivo){
 	// Configura o Mario
 	f->mario.vidas = 3;
 	f->mario.score = 0;
-	f->mario.pos = (Vector2f) {5.0, 2.0};
-
+	f->mario.pos = (Vector2f) {10, 5};
 
 	return true;
 }
@@ -73,6 +72,7 @@ void fases_desenha(Fase * f){
 			tile_desenha(x,y, tile_para_cor(f->mapa[y][x]));
 	    }
     }
+
 }
 
 bool fases_inicia(Jogo * j){
@@ -82,6 +82,68 @@ bool fases_inicia(Jogo * j){
 
 void fases_termina(Jogo * j){
 	TODO();
+}
+
+bool fase_mario_no_teto(Fase * fase){
+	Vector2f pos_mario = fase->mario.pos;
+
+	// Margem de 0.1 porque o chão é no próximo tile.
+	double y_acima  = pos_mario.y - MARIO_ALTURA/2 - 0.1;
+	int x_inicial = (int) (pos_mario.x - MARIO_LARGURA/2 );
+	int x_final   = (int) (pos_mario.x + MARIO_LARGURA/2 );
+
+	bool result = false;
+	for(int x = x_inicial; x <= x_final && result == false; ++x){
+		result |= (fase->mapa[(int)y_acima][x]  == 'p');
+	}
+	return result;
+
+}
+
+bool fase_mario_no_chao(Fase * fase){
+	Vector2f pos_mario = fase->mario.pos;
+
+	// Margem de 0.1 porque o chão é no próximo tile.
+	double y_abaixo  = pos_mario.y + MARIO_ALTURA/2 + 0.1;
+	int x_inicial = (int) (pos_mario.x - MARIO_LARGURA/2 );
+	int x_final   = (int) (pos_mario.x + MARIO_LARGURA/2 );
+
+	printf("\t Dy: %.2f  ", (y_abaixo - ((int)y_abaixo)));
+
+	// Se ele não estiver logo logo acima, ele não conta como 'em cima'
+	// do bloco. Senão ele pode só estar com o pé numa parede e contar
+	// como 'em cima'. Como se estivesse no chocolate do transformice.
+	if(y_abaixo - ((int)y_abaixo) >= 0.25)
+		return false;
+
+	// Um Mario caindo infinitamente provavelmente seria ruim.
+	// Mas talvez ele tenha que cair quando morre (credo!)
+	if(y_abaixo > FASE_ALTURA)
+		return true;
+
+	// Só para fazer sentido: deleta esse comentário depois:
+	//  Passa por todos os x que estão diretamente abaixo do Mario.
+	//  Se ele encontrar algum =='p', o resultado vai ser true.
+	//  Quando encontrar, sai do loop (olha a condição do for).
+	bool result = false;
+	for(int x = x_inicial; x <= x_final && result == false; ++x){
+		result |= (fase->mapa[(int)y_abaixo][x]  == 'p');
+	}
+	return result;
+}
+
+// TODO: hardcode aleatório. Talvez ter um conjunto
+// unificado de defines futuramente seja mais prudente
+Rectangle mario_pos_to_screen_rect(Vector2 pos){
+	Rectangle mario_rect = {
+		.x = pos.x,
+		.y = pos.y,
+		.width = (int) (4.5 * 16),
+		.height = (int) (4.5 * 21),
+	};
+	mario_rect.x -= mario_rect.width / 2;
+	mario_rect.y -= mario_rect.height / 2;
+	return mario_rect;
 }
 
 #endif /* FASES_C */

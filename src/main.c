@@ -21,6 +21,10 @@ int main(void) {
     }
 
     while (!WindowShouldClose() && !j.sair) {
+        // FIX: console não printaria nada porque o
+        // programa não manda nada se não for obrigado.
+        fflush(stdout);
+
         jogo_entrada(&j);
         jogo_logica(&j);
 

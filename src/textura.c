@@ -14,7 +14,7 @@ Rectangle get_spritesheet_pos(TexturaId textura){
 		case T_LOGO:
 			return (Rectangle){.x = 20, .y = 10, .width=200, .height=72};
 		case T_MARIO1:
-			return (Rectangle){.x = 0, .y = 600, .width = 20, .height=25};
+			return (Rectangle){.x = 3, .y = 603, .width = 16, .height=21};
 			break;
 		default:
 			TODO();
@@ -31,7 +31,7 @@ void texto_centralizado(Font font, char * text, Vector2 pos, Color cor){
 
 
 void textura_desenha(Jogo * j, TexturaId textura, Vector2 pos){
-	const int SCALE = 3;
+	const double SCALE = 4.5;
 	// TODO: é mais útil pra gente usar x,y como coordenada
 	// do canto superior-esq do objeto ou como o centro dele? acho que centro, porque na hora de verificar
 	// se tal coisa encostou em tal acho mais fácil se basear no centro (?)
@@ -42,5 +42,9 @@ void textura_desenha(Jogo * j, TexturaId textura, Vector2 pos){
 						};
 	rect_final.x -= rect_final.width / 2;
 	rect_final.y -= rect_final.height / 2;
+
+	// Tranquilo remover. É útil para testar se o carregamento da textura ta alinhado corretamente.
+	// DrawRectangleLines(rect_final.x, rect_final.y, rect_final.width, rect_final.height, GREEN);
+
 	DrawTextureTiled(j->spritesheet, rect_textura, rect_final, (Vector2){.x=0,.y=0}, 0.0f, SCALE, WHITE);
 }

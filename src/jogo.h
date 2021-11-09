@@ -10,7 +10,8 @@
 #ifndef JOGO_H
 #define JOGO_H
 
-#include "tipos.h"
+#include <raylib.h>
+
 
 #define TELA_TITULO ("MarioDos - Ana Laura e Léo Hardt")
 
@@ -31,6 +32,66 @@
 #define NMAX_MOEDAS   (100)
 #define NMAX_INIMIGOS (100)
 #define NMAX_CANOS    ( 5 )
+
+/* Tamanho EM TILES! */
+#define MARIO_LARGURA ( 4.5*16.0 / TILE_LARGURA )
+#define MARIO_ALTURA  ( 4.5*21.0 / TILE_ALTURA  )
+
+typedef enum Tela {
+	TELA_MENU,
+	TELA_JOGO,
+	TELA_HIGHSCORE,
+	TELA_AJUDA,
+	TELA_SOBRE,
+	TELA_NENHUMA
+} Tela;
+
+enum SoundId {
+	S_AGUA = 0,
+	S_DANO,
+	S_INICIO,
+	S_PULO,
+	S_MENU_SELECT,
+	S_MENU_SETA,
+	S_MOEDA,
+	S_GAMEOVER,
+	S_MARIODIE,
+	S_VIRAR,
+
+	N_SONS
+};
+
+/* Todas as informações que são pertinentes somente a uma tela
+ * deverão, idealmente, estar na estrutura da tela correspondente.
+ * Cada uma dessas estruturas pode ser encontrada em seu respectivo
+ * arquivo (tela_menu.c, tela_jogo.c, etc.)*/
+typedef struct TelaMenuInfo TelaMenuInfo;
+typedef struct TelaJogoInfo TelaJogoInfo;
+typedef struct TelaHighscoreInfo TelaHighscoreInfo;
+
+typedef struct Jogo {
+	char		janela_titulo[256];
+	int			janela_largura;
+	int			janela_altura;
+
+	Font 		fonte_menu;
+	Sound		sons[N_SONS];
+
+	Texture		spritesheet;
+
+	Tela		tipo_tela;
+
+	// Se o jogo deve fechar no próximo loop.
+	bool		sair;
+	// Qualquer informação que a tela atual queira guardar
+	// ficaria aqui. Para a tela menu, por exemplo, pode ser
+	// a opção do menu selecionada.
+	union {
+		TelaMenuInfo * 		tela_menu;
+		TelaJogoInfo * 		tela_jogo;
+		TelaHighscoreInfo * tela_highscore;
+	};
+} Jogo;
 
 typedef enum Direcao {
 	PARADO = 0,
@@ -77,8 +138,7 @@ typedef struct Vector2f {
 
 typedef struct Mario {
 	Vector2f pos;
-	float velocidadeX;
-	float velocidadeY;
+	Vector2f vel;
 
 	int score;
 	int vidas;
@@ -160,5 +220,9 @@ void telajogo_desenha(Jogo * j);
 void telajogo_entrada(Jogo * j);
 void telajogo_logica(Jogo * j);
 void telajogo_termina(Jogo * j);
+
+bool fase_mario_no_teto(Fase * fase);
+bool fase_mario_no_chao(Fase * fase);
+Rectangle mario_pos_to_screen_rect(Vector2 pos);
 
 #endif /* JOGO_H */
