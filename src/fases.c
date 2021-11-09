@@ -108,8 +108,6 @@ bool fase_mario_no_chao(Fase * fase){
 	int x_inicial = (int) (pos_mario.x - MARIO_LARGURA/2 );
 	int x_final   = (int) (pos_mario.x + MARIO_LARGURA/2 );
 
-	printf("\t Dy: %.2f  ", (y_abaixo - ((int)y_abaixo)));
-
 	// Se ele não estiver logo logo acima, ele não conta como 'em cima'
 	// do bloco. Senão ele pode só estar com o pé numa parede e contar
 	// como 'em cima'. Como se estivesse no chocolate do transformice.

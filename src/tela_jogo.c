@@ -37,9 +37,16 @@ void telajogo_inicia(Jogo * j){
 
 }
 
+// Se o mario quer pular de [4,2] para [5,5], temos que ver se não há
+// nada que vá ser um chão ou parede para ele antes. Se tiver um chão
+// em que o mario só consegue ficar de pé na altura 4, então o y final
+// dele tem que ser 4. Nem 2 nem 5.    (Mesma coisa com paredes)
 void conserta_nova_posicao(Fase * f, Vector2f * novaPosicao){
     Mario * mario = & f->mario;
 
+    // TODO: aqui eu só supus que ele tá caindo (novaY > antigaY).
+    // Talvez dê pra fazer um IF e dois FORs quase iguais, embora eu ache
+    // mais raro de acotnecer (ele nunca vai pegar muita velocidade na subida)
     for(double y = mario->pos.y; y < novaPosicao->y; ++y){
         // Se no meio do caminho vertical tiver um bloco, ele deve parar antes.
         // printf("Vai acessar o mapa em [%d %d]", (int) (y+0.5), (int) (mario->pos.x + 0.5));
@@ -47,9 +54,13 @@ void conserta_nova_posicao(Fase * f, Vector2f * novaPosicao){
             // Se for uma plataforma, é uma altura 'antes' dessa,
             // Entrega a altura desfazendo um passo.
             novaPosicao->y = (int)y;
+            // E se ele bateu no chão, ele perde a velocidade vertical.
             mario->vel.y = 0;
         }
     }
+
+    // TODO: ver se não há paredes também;
+    // Sugiro testar com mapa personalizado (de preferencia com uma queda grande)
 
     // Se não teve que interferir, que bom :)
 }
@@ -58,6 +69,7 @@ void muda_posicao(Fase *f){
     Mario * mario = & f->mario;
     Vector2f novaPosicao = mario->pos;
 
+    // Nova posição teórica. Vemos se é possível na chamada abaixo
     novaPosicao.x += mario->vel.x;
     novaPosicao.y += mario->vel.y;
 
@@ -67,16 +79,6 @@ void muda_posicao(Fase *f){
     mario->pos.x = novaPosicao.x;
     mario->pos.y = novaPosicao.y;
     //}
-}
-void muda_velocidade(Mario *mario, float vx, float vy){
-    mario->vel.x +=vx;
-    mario->vel.y +=vy;
-    /*if (mario->vel.x>2){
-        mario->vel.x -=vx;
-    }*/
-    /*else if(mario->vel.x<0){
-        mario->vel.x=0;
-    }*/
 }
 
 void telajogo_desenha(Jogo * j){
@@ -111,20 +113,18 @@ void telajogo_desenha(Jogo * j){
 void telajogo_entrada(Jogo * j){
 	TelaJogoInfo * tela = j->tela_jogo;
     Mario * mario = & j->tela_jogo->fase.mario;
-    printf("Mario Pos: [%.2f , %.2f] Vel: [%.2f , %.2f] \n",
-        mario->pos.x, mario->pos.y,
-        mario->vel.x, mario->vel.y
-    );
 
+    // A função mudaVelocidade não tinha muito valor agregado, era só mudar direto!
     // muda_velocidade(& j->tela_jogo->fase.mario, 0,-1);
 
     // NOTE: Aqui não precisa de else. Se eu segurar LEFT+RIGHT,
-    // a consequência sem o else é ficar parado. A com o ELSE é o que vier primeiro no código.
+    // a consequência sem o else é ficar parado.
+    // Com o ELSE, ele só ativaria o que vier primeiro no código.
 
-    // NOTE2: IsKeyPressed detecta uma vez. IsKeyDown detecta até soltar.
+    // NOTE2: IsKeyPressed detecta uma vez ao pressionar. IsKeyDown detecta até soltar.
 
     // Ele só se mexe para os lados se o jogador quiser. Total liberdade aí.
-    // Então se ele não cair num dos IFs abaixo, o problema não é nosso.
+    // Então se ele não cair num dos IFs abaixo, o personagem não deve se mexer mesmo.
     mario->vel.x = 0;
 
     if(IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_C)){
@@ -134,16 +134,21 @@ void telajogo_entrada(Jogo * j){
 	}
     if(IsKeyDown(KEY_RIGHT) && IsKeyUp(KEY_LEFT)){
         mario->vel.x = 0.5;
-	    printf("KEY_RIGHT");
+	    printf("KEY_RIGHT\t");
 	}
     if(IsKeyDown(KEY_LEFT) && IsKeyUp(KEY_RIGHT)){
         mario->vel.x = -0.5;
-	    printf("KEY_LEFT");
+	    printf("KEY_LEFT\t");
 	}
+
+    printf("Mario Pos: [%.2f , %.2f] Vel: [%.2f , %.2f] \n",
+        mario->pos.x, mario->pos.y,
+        mario->vel.x, mario->vel.y
+    );
+
 }
 
 void telajogo_logica(Jogo * j){
-    const double GRAVIDADE = 0.05;
 
     muda_posicao(& j->tela_jogo->fase);
 

@@ -37,6 +37,9 @@
 #define MARIO_LARGURA ( 4.5*16.0 / TILE_LARGURA )
 #define MARIO_ALTURA  ( 4.5*21.0 / TILE_ALTURA  )
 
+/* Velocidade Y aumenta em 0.05 Tiles/60s a cada 1/60 segundos, isso dá 180 Tiles/s^2, se não me engano */
+#define GRAVIDADE (0.05)
+
 typedef enum Tela {
 	TELA_MENU,
 	TELA_JOGO,
