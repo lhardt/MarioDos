@@ -13,9 +13,27 @@ Rectangle get_spritesheet_pos(TexturaId textura){
 	switch(textura){
 		case T_LOGO:
 			return (Rectangle){.x = 20, .y = 10, .width=200, .height=72};
-		case T_MARIO1:
+		case E_MARIO1:
 			return (Rectangle){.x = 3, .y = 603, .width = 16, .height=21};
 			break;
+		case E_MARIO2:
+			return (Rectangle){.x = 53, .y = 603, .width = 16, .height=21};
+			break;
+		case D_MARIO2:
+			return (Rectangle){.x = 53, .y = 632, .width = 16, .height=21};
+			break;
+        case E_TARTARUGA2:
+            return (Rectangle){.x = 30, .y = 355, .width = 17, .height=13};
+            break;
+        case D_TARTARUGA2:
+            return (Rectangle){.x = 30, .y = 335, .width = 17, .height=13};
+            break;
+        case E_CANO:
+            return (Rectangle){.x = 51, .y = 203, .width = 48, .height=30};
+            break;
+        case D_CANO:
+            return (Rectangle){.x = 51, .y = 246, .width = 48, .height=30};
+            break;
 		default:
 			TODO();
 	}

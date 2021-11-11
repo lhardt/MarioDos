@@ -40,6 +40,7 @@ bool load_fases(Fase * f, char * arquivo){
 	f->mario.vidas = 3;
 	f->mario.score = 0;
 	f->mario.pos = (Vector2f) {10, 5};
+	f->n_inimigos = f->n_carangueijos +f->n_tartarugas;
 
 	return true;
 }
@@ -52,12 +53,12 @@ Color tile_para_cor(char c){
 	switch(c){
 		case '-': return BLACK;
 		case 'p': return BLUE;
-		case 'm': return RED;
+		case 'm': return RED;//TIRAR E COLOCAR O MARIO
 	}
 	return BLACK;
 }
 
-void fases_desenha(Fase * f){
+void fases_desenha(Jogo * j){
 	// /* Teste: desenha as 4 bordas da tela. */
 	// for(int i = 0; i < FASE_ALTURA; ++i){
 	// 	tile_desenha(0,i, RED);
@@ -67,9 +68,37 @@ void fases_desenha(Fase * f){
 	// 	tile_desenha(i,0, RED);
 	// 	tile_desenha(i,27, RED);
 	// }
+    Fase *f = &j->tela_jogo->fase;
+
     for (int y=0; y < FASE_ALTURA; y++){
 		for (int x=0; x<FASE_LARGURA; x++){
-			tile_desenha(x,y, tile_para_cor(f->mapa[y][x]));
+
+			if (f->mapa[y][x] == 'c'){
+                    Vector2 pos = {.x = x, .y = y};//  AQUIIIII, não consegui acertar o posicionamento e meu cérebro já está uma ameba
+                if (x> FASE_LARGURA/2){//se for desenhar na parte direita da tela
+                    printf ("\ndesenhou D");
+                    textura_desenha(j,D_CANO, pos);
+                }
+                else{
+                        printf ("\ndesenhou E");
+                    textura_desenha(j,E_CANO, pos);
+                }
+			}
+			else if(f->mapa[y][x] == 'b'){
+                TODO();
+			}
+			else if(f->mapa[y][x] == 'm'){
+                TODO();
+			}
+			else{
+                tile_desenha(x,y, tile_para_cor(f->mapa[y][x]));
+			}
+	    }
+    }
+
+    for (int y=FASE_ALTURA-TILES_CHAO; y < FASE_ALTURA; y++){
+		for (int x=0; x<FASE_LARGURA; x++){
+			tile_desenha(x,y, MAROON);
 	    }
     }
 
@@ -100,13 +129,13 @@ bool fase_mario_no_teto(Fase * fase){
 
 }
 
-bool fase_mario_no_chao(Fase * fase){
-	Vector2f pos_mario = fase->mario.pos;
+bool fase_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura){
+
 
 	// Margem de 0.1 porque o chão é no próximo tile.
-	double y_abaixo  = pos_mario.y + MARIO_ALTURA/2 + 0.1;
-	int x_inicial = (int) (pos_mario.x - MARIO_LARGURA/2 );
-	int x_final   = (int) (pos_mario.x + MARIO_LARGURA/2 );
+	double y_abaixo  = pos->y + pAltura/2 + 0.1;
+	int x_inicial = (int) (pos->x - pLargura/2 );
+	int x_final   = (int) (pos->x + pLargura/2 );
 
 	// Se ele não estiver logo logo acima, ele não conta como 'em cima'
 	// do bloco. Senão ele pode só estar com o pé numa parede e contar
@@ -116,7 +145,7 @@ bool fase_mario_no_chao(Fase * fase){
 
 	// Um Mario caindo infinitamente provavelmente seria ruim.
 	// Mas talvez ele tenha que cair quando morre (credo!)
-	if(y_abaixo > FASE_ALTURA)
+	if(y_abaixo>= FASE_ALTURA-TILES_CHAO)
 		return true;
 
 	// Só para fazer sentido: deleta esse comentário depois:
