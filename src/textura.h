@@ -9,7 +9,11 @@ typedef enum TexturaId {
 	D_TARTARUGA2,
 	E_TARTARUGA2,
 	E_CANO,
-	D_CANO
+	D_CANO,
+	E_CARANGUEJO,
+	T_CORACAO,
+	T_POW,
+
 	// TODO
 	// mario parado, mario direita, mario caindo etc etc etc.
 } TexturaId;

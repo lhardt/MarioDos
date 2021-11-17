@@ -120,7 +120,7 @@ void telamenu_desenha(Jogo * j){
 	TelaMenuInfo * tela = j->tela_menu;
 
 	// NOTE: isso pode ser feito com um FOR. Cada elemento fica a uma altura fixa dos outros.
-	char * texts[] = {"Continuar", "Carregar mapa", "Ranking", "Ajuda", "Sobre", "Sair", "" };
+	char * texts[] = {"Novo Jogo", "Continuar", "Carregar mapa", "Ranking", "Ajuda", "Sobre", "Sair"};
 	for (int x=0; x< OPTIONS; x++){
         pos.y +=40;
 		texto_centralizado(j->fonte_menu, texts[x], pos, tela->cores[tela->options[x]]);
