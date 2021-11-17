@@ -33,14 +33,20 @@ bool load_fases(Fase * f, char * arquivo){
 				f->mapa[i_linha][i_char] = fgetc(entrada);
 			}
         }
-		fscanf(entrada, "%d %d %d\n", &f->n_tartarugas, &f->n_carangueijos, &f->delay);
+		fscanf(entrada, "%d %d %d\n", &f->n_tartarugas, &f->n_caranguejos, &f->delay);
+
+		for(int i_linha = FASE_ALTURA - TILES_CHAO; i_linha < FASE_ALTURA; ++i_linha){
+			for(int i_char = 0; i_char < FASE_LARGURA; ++i_char ){
+				f->mapa[i_linha][i_char] = 'T';
+			}
+		}
     }
 
 	// Configura o Mario
 	f->mario.vidas = 3;
 	f->mario.score = 0;
 	f->mario.pos = (Vector2f) {10, 5};
-	f->n_inimigos = f->n_carangueijos +f->n_tartarugas;
+	//f->n_inimigos = f->n_caranguejos +f->n_tartarugas;
 
 	return true;
 }
@@ -49,13 +55,46 @@ void tile_desenha(int x, int y, Color cor){
 	DrawRectangle(x * TILE_LARGURA, y * TILE_ALTURA, TILE_LARGURA, TILE_ALTURA, cor);
 }
 
-Color tile_para_cor(char c){
-	switch(c){
-		case '-': return BLACK;
-		case 'p': return BLUE;
-		case 'm': return RED;//TIRAR E COLOCAR O MARIO
+void desenha_vidas(Jogo * j, int n_vidas){
+	ASSERT(n_vidas >= 0 && n_vidas <= 3);
+	if(n_vidas == 0) return;
+
+	Vector2 pos = (Vector2) {.x = POS_VIDAS_X, .y = POS_VIDAS_Y};
+	for(int i = 0; i < n_vidas; ++i){
+		textura_desenha(j, T_CORACAO, pos);
+		pos.x += POS_VIDAS_ESPACO;
 	}
-	return BLACK;
+}
+
+void desenha_pontos(Jogo * j, int n_pontos){
+	Vector2 pos = {
+		.x = 250,
+		.y = 20
+	};
+	texto_centralizado(j->fonte_menu, "PONTOS:", pos, GREEN);
+
+	pos.x += 120;
+	char numstr[30];
+	sprintf(numstr, "%d", n_pontos);
+	texto_centralizado(j->fonte_menu, numstr, pos, GREEN);
+}
+
+void desenha_num_fase(Jogo * j, int n_fase){
+	Vector2 pos = { .x = 550, .y = 20 };
+	texto_centralizado(j->fonte_menu, "FASE:", pos, GREEN);
+
+	pos.x += 80;
+	char numstr[30];
+	sprintf(numstr, "%d", n_fase);
+	texto_centralizado(j->fonte_menu, numstr, pos, GREEN);
+}
+
+void desenha_nome_jogador(Jogo * j, char * nome){
+	Vector2 pos = { .x = 850, .y = 20 };
+	texto_centralizado(j->fonte_menu, "JOGADOR:", pos, GREEN);
+
+	pos.x += 120;
+	texto_centralizado(j->fonte_menu, nome, pos, GREEN);
 }
 
 void fases_desenha(Jogo * j){
@@ -72,36 +111,46 @@ void fases_desenha(Jogo * j){
 
     for (int y=0; y < FASE_ALTURA; y++){
 		for (int x=0; x<FASE_LARGURA; x++){
-
-			if (f->mapa[y][x] == 'c'){
-                    Vector2 pos = {.x = x, .y = y};//  AQUIIIII, não consegui acertar o posicionamento e meu cérebro já está uma ameba
-                if (x> FASE_LARGURA/2){//se for desenhar na parte direita da tela
-                    printf ("\ndesenhou D");
-                    textura_desenha(j,D_CANO, pos);
-                }
-                else{
-                        printf ("\ndesenhou E");
-                    textura_desenha(j,E_CANO, pos);
-                }
-			}
-			else if(f->mapa[y][x] == 'b'){
-                TODO();
-			}
-			else if(f->mapa[y][x] == 'm'){
-                TODO();
-			}
-			else{
-                tile_desenha(x,y, tile_para_cor(f->mapa[y][x]));
+			switch(f->mapa[y][x]){
+				case 'c':{
+					Vector2f pos_tiles = {.x = 1.0 + x, .y = 1.0 + y};
+					Vector2 pos_screen = posfloat_para_tela(pos_tiles);
+					//se for desenhar na parte direita da tela
+					if (x > FASE_LARGURA/2){
+						textura_desenha(j,D_CANO_S, pos_screen);
+					} else{
+						textura_desenha(j,E_CANO_S, pos_screen);
+					}
+					break;
+				}
+				case 'b': {
+					Vector2f pos_tiles = {.x = x, .y = y};
+					Vector2 pos_screen = posfloat_para_tela(pos_tiles);
+					textura_desenha(j,T_POW, pos_screen);
+					tile_desenha(x,y, PINK);
+					break;
+				}
+				case 'p': {
+					tile_desenha(x,y, BLUE);
+					break;
+				}
+				case 'T': {
+					tile_desenha(x,y, PINK);
+					break;
+				}
 			}
 	    }
     }
 
-    for (int y=FASE_ALTURA-TILES_CHAO; y < FASE_ALTURA; y++){
-		for (int x=0; x<FASE_LARGURA; x++){
-			tile_desenha(x,y, MAROON);
-	    }
-    }
-
+	desenha_vidas(j,  f->mario.vidas);
+	desenha_pontos(j, j->pontos);//desenha_pontos(j, f->mario.score);
+	desenha_num_fase(j, f->n_mapa);
+	desenha_nome_jogador(j, "XYZ");
+    // for (int y=FASE_ALTURA-TILES_CHAO; y < FASE_ALTURA; y++){
+	// 	for (int x=0; x<FASE_LARGURA; x++){
+	// 		tile_desenha(x,y, MAROON);
+	//     }
+    // }
 }
 
 bool fases_inicia(Jogo * j){
@@ -113,25 +162,23 @@ void fases_termina(Jogo * j){
 	TODO();
 }
 
-bool fase_mario_no_teto(Fase * fase){
+
+bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura){
 	Vector2f pos_mario = fase->mario.pos;
 
 	// Margem de 0.1 porque o chão é no próximo tile.
-	double y_acima  = pos_mario.y - MARIO_ALTURA/2 - 0.1;
-	int x_inicial = (int) (pos_mario.x - MARIO_LARGURA/2 );
-	int x_final   = (int) (pos_mario.x + MARIO_LARGURA/2 );
+	double y_acima  = pos_mario.y - pAltura/2 - 0.1;
+	int x_inicial = (int) (pos->x - pLargura/2 );
+	int x_final   = (int) (pos->x + pLargura/2 );
 
 	bool result = false;
 	for(int x = x_inicial; x <= x_final && result == false; ++x){
 		result |= (fase->mapa[(int)y_acima][x]  == 'p');
 	}
 	return result;
-
 }
 
-bool fase_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura){
-
-
+bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura){
 	// Margem de 0.1 porque o chão é no próximo tile.
 	double y_abaixo  = pos->y + pAltura/2 + 0.1;
 	int x_inicial = (int) (pos->x - pLargura/2 );
@@ -148,10 +195,9 @@ bool fase_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura){
 	if(y_abaixo>= FASE_ALTURA-TILES_CHAO)
 		return true;
 
-	// Só para fazer sentido: deleta esse comentário depois:
-	//  Passa por todos os x que estão diretamente abaixo do Mario.
+	//  Passa por todos os x que estão diretamente abaixo do personagem.
 	//  Se ele encontrar algum =='p', o resultado vai ser true.
-	//  Quando encontrar, sai do loop (olha a condição do for).
+	//  Quando encontrar, sai do loop .
 	bool result = false;
 	for(int x = x_inicial; x <= x_final && result == false; ++x){
 		result |= (fase->mapa[(int)y_abaixo][x]  == 'p');
@@ -165,8 +211,8 @@ Rectangle mario_pos_to_screen_rect(Vector2 pos){
 	Rectangle mario_rect = {
 		.x = pos.x,
 		.y = pos.y,
-		.width = (int) (4.5 * 16),
-		.height = (int) (4.5 * 21),
+		.width = (int) (3.5 * 16),
+		.height = (int) (3.5 * 21),
 	};
 	mario_rect.x -= mario_rect.width / 2;
 	mario_rect.y -= mario_rect.height / 2;

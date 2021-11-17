@@ -19,6 +19,7 @@ bool jogo_inicia(Jogo * j){
 	j->janela_largura = TELA_LARGURA;
 	j->janela_altura = TELA_ALTURA;
 	strcpy(j->janela_titulo, TELA_TITULO);
+	j->ticks = 0;
 
 	InitWindow(j->janela_largura, j->janela_altura, j->janela_titulo);
 
@@ -48,6 +49,7 @@ void jogo_desenha(Jogo * j){
 	tela_desenha(j);
 }
 void jogo_logica(Jogo * j){
+	++j->ticks;
 	tela_logica(j);
 }
 void jogo_termina(Jogo * j){

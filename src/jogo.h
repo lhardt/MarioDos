@@ -33,19 +33,28 @@
 #define NMAX_INIMIGOS (100)
 #define NMAX_CANOS    ( 5 )
 
-/* Tamanho EM TILES! */
-#define MARIO_LARGURA ( 4.5*16.0 / TILE_LARGURA )
-#define MARIO_ALTURA  ( 4.5*21.0 / TILE_ALTURA  )
+#define POS_VIDAS_X	  		(25)
+#define POS_VIDAS_Y	  		(25)
+#define POS_VIDAS_ESPACO	(35)
 
-#define TARTARUGA_LARGURA ( 4.5*17.0 / TILE_LARGURA )
-#define TARTARUGA_ALTURA ( 4.5*13.0 / TILE_ALTURA  )
+/* Estava esticando todas as texturas por 4.5 mas 3.5 parece ficar melhor. */
+#define TILE_SCALE  (3.5)
+/* Tamanho EM TILES! */
+#define MARIO_LARGURA ( TILE_SCALE*16.0 / TILE_LARGURA )
+#define MARIO_ALTURA  ( TILE_SCALE*21.0 / TILE_ALTURA  )
+
+#define TARTARUGA_LARGURA ( TILE_SCALE*17.0 / TILE_LARGURA )
+#define TARTARUGA_ALTURA ( TILE_SCALE*13.0 / TILE_ALTURA  )
+
+#define CARANGUEJO_LARGURA ( TILE_SCALE * 15  / TILE_LARGURA)
+#define CARANGUEJO_ALTURA ( TILE_SCALE * 13 / TILE_ALTURA)
 
 /*Quantidade de tiles que formam a altura do chão. Ex. 2 =, das 28 linhas da tela, 2 são chão*/
 #define TILES_CHAO 2
 
 /* linha de saída dos canoas superiores*/
 #define ALTURA_CANOS 3
-/*distancia dos canoas da parede*/
+/*distancia dos canos da parede*/
 #define DIST_CANOS 1
 
 /* Velocidade Y aumenta em 0.05 Tiles/60s a cada 1/60 segundos, isso dá 180 Tiles/s^2, se não me engano */
@@ -109,7 +118,7 @@ typedef enum TipoInimigo {
 } TipoInimigo;
 
 typedef enum Vulnerabilidade {
-	V_IVULNERAVEL,
+	V_INVULNERAVEL,
 	/* NOTE: tartarugas não ficam furiosas. */
 	V_FURIOSO,
 	V_VULNERAVEL,
@@ -152,13 +161,13 @@ typedef struct Fase {
 	int n_inimigos;
 	Inimigo inimigos[NMAX_INIMIGOS];
 
+	int n_mapa;
 	// vindo diretamente do arquivo
-	int n_carangueijos, n_tartarugas, delay;
+	int n_caranguejos, n_tartarugas, delay;
 } Fase;
 
 typedef struct TelaJogoInfo {
     Fase fase;
-    int nMapa;
 }TelaJogoInfo;
 
 typedef struct Jogo {
@@ -172,7 +181,12 @@ typedef struct Jogo {
 	Texture		spritesheet;
 
 	Tela		tipo_tela;
-
+	// Número de 1/60 segundos passados;
+	int ticks;
+	//Pontução
+	int pontos;
+	//Nome do jogador
+	char jogador[50];
 	// Se o jogo deve fechar no próximo loop.
 	bool		sair;
 	// Qualquer informação que a tela atual queira guardar
@@ -247,8 +261,8 @@ void telajogo_entrada(Jogo * j);
 void telajogo_logica(Jogo * j);
 void telajogo_termina(Jogo * j);
 
-bool fase_mario_no_teto(Fase * fase);
-bool fase_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
+bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
+bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
 Rectangle mario_pos_to_screen_rect(Vector2 pos);
 
 #endif /* JOGO_H */
