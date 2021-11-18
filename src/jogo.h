@@ -63,6 +63,7 @@
 typedef enum Tela {
 	TELA_MENU,
 	TELA_JOGO,
+	TELA_CARREGA,
 	TELA_HIGHSCORE,
 	TELA_AJUDA,
 	TELA_SOBRE,
@@ -91,7 +92,7 @@ enum SoundId {
 typedef struct TelaMenuInfo TelaMenuInfo;
 //typedef struct TelaJogoInfo TelaJogoInfo;
 typedef struct TelaHighscoreInfo TelaHighscoreInfo;
-
+typedef struct TelaCarregaInfo TelaCarregaInfo;
 
 
 
@@ -186,7 +187,9 @@ typedef struct Jogo {
 	//Pontução
 	int pontos;
 	//Nome do jogador
-	char jogador[50];
+	char nome_jogador[50];
+	//
+	char nome_fase[50];
 	// Se o jogo deve fechar no próximo loop.
 	bool		sair;
 	// Qualquer informação que a tela atual queira guardar
@@ -196,6 +199,7 @@ typedef struct Jogo {
 		TelaMenuInfo * 		tela_menu;
 		TelaJogoInfo * 		tela_jogo;
 		TelaHighscoreInfo * tela_highscore;
+		TelaCarregaInfo *   tela_carrega;
 	};
 } Jogo;
 
@@ -260,6 +264,12 @@ void telajogo_desenha(Jogo * j);
 void telajogo_entrada(Jogo * j);
 void telajogo_logica(Jogo * j);
 void telajogo_termina(Jogo * j);
+
+void telacarrega_inicia(Jogo * j);
+void telacarrega_desenha(Jogo * j);
+void telacarrega_entrada(Jogo * j);
+void telacarrega_logica(Jogo * j);
+void telacarrega_termina(Jogo * j);
 
 bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
 bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura);

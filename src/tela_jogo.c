@@ -151,7 +151,7 @@ void telajogo_inicia(Jogo * j){
 	//j->tela_jogo->fase.n_inimigos = 1;
 	j->pontos =0;
 
-    load_fases(& j->tela_jogo->fase, "fase1.txt");
+	load_fases(& j->tela_jogo->fase, j->nome_fase);
 
 
 }
@@ -327,7 +327,7 @@ void muda_velocidade(Fase * f, Vector2f * vel, Vector2f * pos, float pLargura, f
 
 bool inimigo_na_posicao(Inimigo * inimigo, Vector2f * pos_mario){//pegar tiles acima do mario, ver se personagem está logo acima dele
     int xm_inicial = (int) (pos_mario->x - MARIO_LARGURA/2 );
-	int xm_final   = (int) (pos_mario->x + MARIO_ALTURA/2 );
+	int xm_final   = (int) (pos_mario->x + MARIO_LARGURA/2 );
 	double y_acima_m  = pos_mario->y - MARIO_ALTURA/2 - 0.1;
 	int pAltura;
 
@@ -360,6 +360,26 @@ bool inimigo_na_posicao(Inimigo * inimigo, Vector2f * pos_mario){//pegar tiles a
 
 }
 
+/*bool mario_colide(Vector2f pos_mario, Vector2f pos_p, int largura, int altura){
+    int xm_inicial = (int) (pos_mario->x - MARIO_LARGURA/2 );
+	int xm_final   = (int) (pos_mario->x + MARIO_LARGURA/2 );
+    int ym_inicial = (int) (pos_mario->y - MARIO_ALTURA/2 );
+	int ym_final   = (int) (pos_mario->y + MARIO_ALTURA/2 );
+
+    int xp_inicial = (int) (pos_p->x - largura/2 );
+	int xp_final   = (int) (pos_p->x + largura/2 );
+    int yp_inicial = (int) (pos_p->y - altura/2 );
+	int yp_final   = (int) (pos_p->y + altura/2 );
+
+    if ((xm_inicial<=xp_final && xm_inicial>=xp_inicial)
+        || (xm_final>=xp_inical && xm_final<=xp_final ){
+        if ((ym_inicial<=yp_final && ym_inicial>=yp_inicial)
+             || (ym_final<=yp_final && ym_inicial>=yp_inicial)){
+            return true;
+        }
+    }
+    return false;
+}*/
 
 void telajogo_logica(Jogo * j){
 	Fase * f = & j->tela_jogo->fase;

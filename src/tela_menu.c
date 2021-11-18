@@ -12,13 +12,15 @@
 #include "textura.h"
 #include "assert.h"
 
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h> // TEMPORARIO PRA DEBUG
 
 #define OPTIONS 7
 
 typedef enum TelaMenuOption {
-	O_CONTINUAR = 0,
+    O_NOVO_JOGO =0,
+	O_CONTINUAR,
 	O_CARREGAR_MAPA,
 	O_RANKING,
 	O_AJUDA,
@@ -38,9 +40,16 @@ struct TelaMenuInfo {
 // que verificar se opcao == O_SAIR duas vezes.
 void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
     switch (opcao){
+        case O_NOVO_JOGO:
+            strcpy(j->nome_fase, "fase1.txt");
+            jogo_troca_tela(j, TELA_JOGO);
+            break;
         case O_CONTINUAR:
 			jogo_troca_tela(j, TELA_JOGO);
+			break;
 		case O_CARREGAR_MAPA:
+		    jogo_troca_tela(j, TELA_CARREGA);
+		    break;
 		case O_RANKING:
 		case O_AJUDA:
 		case O_SOBRE:

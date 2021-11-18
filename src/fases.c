@@ -44,7 +44,6 @@ bool load_fases(Fase * f, char * arquivo){
 
 	// Configura o Mario
 	f->mario.vidas = 3;
-	f->mario.score = 0;
 	f->mario.pos = (Vector2f) {10, 5};
 	//f->n_inimigos = f->n_caranguejos +f->n_tartarugas;
 
