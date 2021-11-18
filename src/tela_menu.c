@@ -41,16 +41,19 @@ struct TelaMenuInfo {
 void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
     switch (opcao){
         case O_NOVO_JOGO:
+            printf("\nnovo jogo\n printf");
             strcpy(j->nome_fase, "fase1.txt");
-            jogo_troca_tela(j, TELA_JOGO);
+            jogo_troca_tela(j, TELA_NOME);
             break;
         case O_CONTINUAR:
-			jogo_troca_tela(j, TELA_JOGO);
+			jogo_troca_tela(j, TELA_NOME);
 			break;
 		case O_CARREGAR_MAPA:
 		    jogo_troca_tela(j, TELA_CARREGA);
 		    break;
 		case O_RANKING:
+		    jogo_troca_tela(j,TELA_HIGHSCORE);
+		    break;
 		case O_AJUDA:
 		case O_SOBRE:
 			TODO();

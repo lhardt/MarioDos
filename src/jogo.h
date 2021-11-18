@@ -64,6 +64,7 @@ typedef enum Tela {
 	TELA_MENU,
 	TELA_JOGO,
 	TELA_CARREGA,
+	TELA_NOME,
 	TELA_HIGHSCORE,
 	TELA_AJUDA,
 	TELA_SOBRE,
@@ -93,7 +94,7 @@ typedef struct TelaMenuInfo TelaMenuInfo;
 //typedef struct TelaJogoInfo TelaJogoInfo;
 typedef struct TelaHighscoreInfo TelaHighscoreInfo;
 typedef struct TelaCarregaInfo TelaCarregaInfo;
-
+typedef struct TelaNomeInfo TelaNomeInfo;
 
 
 
@@ -188,8 +189,10 @@ typedef struct Jogo {
 	int pontos;
 	//Nome do jogador
 	char nome_jogador[50];
-	//
+	//Nome do arquivo da fase
 	char nome_fase[50];
+	//Número da fase
+	int num_fase;
 	// Se o jogo deve fechar no próximo loop.
 	bool		sair;
 	// Qualquer informação que a tela atual queira guardar
@@ -200,6 +203,7 @@ typedef struct Jogo {
 		TelaJogoInfo * 		tela_jogo;
 		TelaHighscoreInfo * tela_highscore;
 		TelaCarregaInfo *   tela_carrega;
+		TelaNomeInfo*       tela_nome;
 	};
 } Jogo;
 
@@ -270,6 +274,18 @@ void telacarrega_desenha(Jogo * j);
 void telacarrega_entrada(Jogo * j);
 void telacarrega_logica(Jogo * j);
 void telacarrega_termina(Jogo * j);
+
+void telanome_inicia(Jogo * j);
+void telanome_desenha(Jogo * j);
+void telanome_entrada(Jogo * j);
+void telanome_logica(Jogo * j);
+void telanome_termina(Jogo * j);
+
+void telahighscore_inicia(Jogo * j);
+void telahighscore_desenha(Jogo * j);
+void telahighscore_entrada(Jogo * j);
+void telahighscore_logica(Jogo * j);
+void telahighscore_termina(Jogo * j);
 
 bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
 bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura);

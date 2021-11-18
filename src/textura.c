@@ -48,9 +48,9 @@ Rectangle get_spritesheet_pos(TexturaId textura){
 		case T_POW:
 			return (Rectangle){.x =133, .y = 243, .width = 16, .height=16};
         case E_CANO_I:
-            return (Rectangle){.x =11, .y = 215, .width = 18, .height=18};
+            return (Rectangle){.x =11, .y = 215, .width = 32, .height=18};
         case D_CANO_I:
-            return (Rectangle){.x =11, .y = 258, .width = 18, .height=18};
+            return (Rectangle){.x =11, .y = 258, .width = 32, .height=18};
 		default:
 			TODO();
 	}

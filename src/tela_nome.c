@@ -15,40 +15,40 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TAM_MAX 22
+#define TAM_MAX 10
 
-struct TelaCarregaInfo {
-    char arquivo[TAM_MAX];
+struct TelaNomeInfo {
+    char nome[TAM_MAX];
     int nChar;
 };
 
-void telacarrega_inicia(Jogo * j){
-    j->tela_carrega = calloc(1, sizeof(TelaCarregaInfo));
-    j->tela_carrega->nChar =0;
+void telanome_inicia(Jogo * j){
+    j->tela_nome = calloc(1, sizeof(TelaNomeInfo));
+    j->tela_nome->nChar =0;
 }
 
-void telacarrega_desenha(Jogo * j){
-    TelaCarregaInfo * tela = j->tela_carrega;
+void telanome_desenha(Jogo * j){
+    TelaNomeInfo * tela = j->tela_nome;
     Rectangle textBox = {TELA_LARGURA/2.0f - 250, 300, 500, 50 };
     ClearBackground(BLACK);
     Vector2 pos = {.x=600, .y=200};
-    texto_centralizado(j->fonte_menu, "Insira o nome do arquivo: ", pos, WHITE );
+    texto_centralizado(j->fonte_menu, "Insira seu nome: ", pos, WHITE );
     DrawRectangleRec(textBox, LIGHTGRAY);
 
-    texto_centralizado(j->fonte_menu, "Pressione ENTER!", (Vector2){.x=600,.y=500}, WHITE );
-    DrawText(tela->arquivo, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
+    texto_centralizado(j->fonte_menu, "Pressione ENTER para jogar!", (Vector2){.x=600,.y=500}, WHITE );
+    DrawText(tela->nome, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
 }
 
-void telacarrega_entrada(Jogo *j){
-    TelaCarregaInfo * tela = j->tela_carrega;
+void telanome_entrada(Jogo *j){
+    TelaNomeInfo * tela = j->tela_nome;
     int key = GetCharPressed();
 
     while (key > 0) {
 
         if ((key >= 32) && (key <= 125) && ( (tela->nChar)< TAM_MAX))
         {
-            tela->arquivo[tela->nChar] = (char)key;
-            tela->arquivo[(tela->nChar)+1] = '\0';
+            tela->nome[tela->nChar] = (char)key;
+            tela->nome[(tela->nChar)+1] = '\0';
             (tela->nChar)++;
         }
 
@@ -58,19 +58,19 @@ void telacarrega_entrada(Jogo *j){
     if (IsKeyPressed(KEY_BACKSPACE)){
         tela->nChar--;
         if (tela->nChar < 0) tela->nChar = 0;
-        tela->arquivo[tela->nChar] = '\0';
+        tela->nome[tela->nChar] = '\0';
     }
     if (IsKeyPressed(KEY_ENTER)){
-        strcpy(j->nome_fase,tela->arquivo);
-        jogo_troca_tela(j, TELA_NOME);
+        strcpy(j->nome_jogador,tela->nome);
+        jogo_troca_tela(j, TELA_JOGO);
     }
 }
 
-void telacarrega_logica(Jogo * j){
+void telanome_logica(Jogo * j){
 
 }
 
-void telacarrega_termina(Jogo * j){
-	free(j->tela_carrega);
+void telanome_termina(Jogo * j){
+	free(j->tela_nome);
 	j->tela_carrega = NULL;
 }

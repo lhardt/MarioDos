@@ -141,7 +141,7 @@ void telajogo_inicia(Jogo * j){
 	// inicializado com 0000, então todas as outras
 	// opções estarão em branco.
 	j->tela_jogo = calloc(1, sizeof(TelaJogoInfo));
-	j->tela_jogo->fase.n_mapa = 1;// Depois tem que mudar pra funcionar com os jogos carregados, mas por padr�o come�a em 0
+	//j->tela_jogo->fase.n_mapa = 1;// Depois tem que mudar pra funcionar com os jogos carregados, mas por padr�o come�a em 0
 
     j->tela_jogo->fase.mario.vel.x = 0;
     j->tela_jogo->fase.mario.vel.y = 0.1;
@@ -163,6 +163,7 @@ void telajogo_inicia(Jogo * j){
 // dele tem que ser 4. Nem 2 nem 5.    (Mesma coisa com paredes)
 void conserta_nova_posicao(Fase *f, Vector2f *vel, Vector2f * antigaPos, char tipo, Vector2f * novaPosicao){
     float pLargura, pAltura;
+
     switch(tipo){
         case 'M':
             pLargura = MARIO_LARGURA;
@@ -279,8 +280,6 @@ void telajogo_entrada(Jogo * j){
 	TelaJogoInfo * tela = j->tela_jogo;
     Mario * mario = & j->tela_jogo->fase.mario;
 
-    // A função mudaVelocidade não tinha muito valor agregado, era só mudar direto!
-    // muda_velocidade(& j->tela_jogo->fase.mario, 0,-1);
 
     // NOTE: Aqui não precisa de else. Se eu segurar LEFT+RIGHT,
     // a consequência sem o else é ficar parado.
@@ -292,7 +291,7 @@ void telajogo_entrada(Jogo * j){
     // Então se ele não cair num dos IFs abaixo, o personagem não deve se mexer mesmo.
     mario->vel.x = 0;
 
-    if(IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_C)){
+    if(IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_D)){
         if(personagem_no_chao(& j->tela_jogo->fase, &mario->pos, MARIO_LARGURA, MARIO_ALTURA)) {
             mario->vel.y = -0.9;
         }
@@ -380,6 +379,17 @@ bool mario_colide(Vector2f pos_mario, Vector2f pos_p, int largura, int altura){
     return false;
 }
 
+void tipo_largura_altura(double * largura, double *altura, Inimigo * inimigo){
+    if (inimigo->tipo== T_TARTARUGA){
+            *largura = TARTARUGA_LARGURA;
+            *altura = TARTARUGA_ALTURA;
+    }else{
+        *largura = CARANGUEJO_LARGURA;
+        *altura = CARANGUEJO_ALTURA;
+    }
+}
+
+
 void telajogo_logica(Jogo * j){
 	Fase * f = & j->tela_jogo->fase;
 
@@ -421,25 +431,44 @@ void telajogo_logica(Jogo * j){
 
     muda_velocidade(f, & mario->vel, &mario->pos, MARIO_LARGURA, MARIO_ALTURA);
 
-    //NÃO TO ENTENDENDO, ISSO É NECESSÁRIO? ELES MUDAM DE VELOCIDADE SE SIM, TEM QUE ARRUMAR PRO CARANGUEJO
+    //NÃO TO ENTENDENDO, ISSO É NECESSÁRIO? SE SIM, TEM QUE ARRUMAR PRO CARANGUEJO
 	for(int i = 0; i < f->n_inimigos; ++i){
 		Inimigo * inimigo  = &j->tela_jogo->fase.inimigos[i];
 		muda_velocidade(&j->tela_jogo->fase, & inimigo->vel, & inimigo->pos, TARTARUGA_LARGURA, TARTARUGA_ALTURA);
 	}
 
 	for (int i=0; i< f->n_inimigos;i++){
-        int largura, altura;
-        if (f->inimigos[i].tipo== T_TARTARUGA){
-            largura = TARTARUGA_LARGURA;
-            altura = TARTARUGA_ALTURA;
-        }else{
-            largura = CARANGUEJO_LARGURA;
-            altura = CARANGUEJO_ALTURA;
-        }
-        if (mario_colide(mario->pos, f->inimigos[i].pos,largura,altura)){
-            printf("mario colidiu");
-            f->inimigos[i].vivo=false;
+        double largura, altura;
+        tipo_largura_altura(&largura,&altura, &f->inimigos[i]);
+        if (mario_colide(mario->pos, f->inimigos[i].pos,largura,altura) && (f->inimigos[i].vulnerabilidade==V_VULNERAVEL)
+            && f->inimigos[i].vivo==true){
+             f->inimigos[i].vivo=false;
             (j->pontos) +=800;
+        }
+        else if(mario_colide(mario->pos, f->inimigos[i].pos,largura,altura) && !(f->inimigos[i].vulnerabilidade==V_VULNERAVEL)){
+            //mario->vidas -=1; ALGUM PROBLEMA DE COLIDIR DEMAIS E TIRAR VIDAS DEMAIS AQUI
+        }
+	}
+
+	int fase_terminou = true;
+	printf("n_inimigos %d n_c + n_t %d", f->n_inimigos, (f->n_caranguejos+f->n_tartarugas));
+	if (f->n_inimigos<(f->n_caranguejos+f->n_tartarugas)){
+        fase_terminou = false;
+	}
+	for(int i=0;i< (f->n_inimigos);i++){
+        if((f->inimigos[i].vivo==true) && mario->vidas>=0){
+            fase_terminou = false;
+        }
+	}
+	if (fase_terminou == true){
+            printf ("\nfase terminou");
+        if (j->num_fase==1){
+            j->num_fase=2;
+            strcpy(j->nome_fase, "fase2.txt");
+            jogo_troca_tela(j, TELA_JOGO);
+        }
+        else{
+            jogo_troca_tela(j, TELA_HIGHSCORE);
         }
 	}
 

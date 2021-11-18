@@ -78,22 +78,41 @@ void desenha_pontos(Jogo * j, int n_pontos){
 	texto_centralizado(j->fonte_menu, numstr, pos, GREEN);
 }
 
-void desenha_num_fase(Jogo * j, int n_fase){
+void desenha_num_fase(Jogo * j){
 	Vector2 pos = { .x = 550, .y = 20 };
 	texto_centralizado(j->fonte_menu, "FASE:", pos, GREEN);
 
 	pos.x += 80;
 	char numstr[30];
-	sprintf(numstr, "%d", n_fase);
+	sprintf(numstr, "%d", j->num_fase);
 	texto_centralizado(j->fonte_menu, numstr, pos, GREEN);
 }
 
-void desenha_nome_jogador(Jogo * j, char * nome){
+void desenha_nome_jogador(Jogo * j){
 	Vector2 pos = { .x = 850, .y = 20 };
 	texto_centralizado(j->fonte_menu, "JOGADOR:", pos, GREEN);
 
 	pos.x += 120;
-	texto_centralizado(j->fonte_menu, nome, pos, GREEN);
+	texto_centralizado(j->fonte_menu, j->nome_jogador, pos, GREEN);
+}
+
+void desenha_cano_s(Jogo * j, int x,int y){
+    Vector2f pos_tiles = {.x = 1.0 + x, .y = 1.0 + y};
+    Vector2 pos_screen = posfloat_para_tela(pos_tiles);
+
+    if (x > FASE_LARGURA/2){
+        textura_desenha(j,D_CANO_S, pos_screen);
+    } else{
+        textura_desenha(j,E_CANO_S, pos_screen);
+    }
+}
+
+void desenha_canos_i(Jogo * j){
+    Vector2 pos_screen_d = posfloat_para_tela(((Vector2f){.x=1.0+114, .y = 1.0+23}));
+    Vector2 pos_screen_e = posfloat_para_tela(((Vector2f){.x=1.0+4.7, .y =1.0+23}));
+
+    textura_desenha(j,D_CANO_I, pos_screen_d);
+    textura_desenha(j,E_CANO_I, pos_screen_e);
 }
 
 void fases_desenha(Jogo * j){
@@ -111,17 +130,6 @@ void fases_desenha(Jogo * j){
     for (int y=0; y < FASE_ALTURA; y++){
 		for (int x=0; x<FASE_LARGURA; x++){
 			switch(f->mapa[y][x]){
-				case 'c':{
-					Vector2f pos_tiles = {.x = 1.0 + x, .y = 1.0 + y};
-					Vector2 pos_screen = posfloat_para_tela(pos_tiles);
-					//se for desenhar na parte direita da tela
-					if (x > FASE_LARGURA/2){
-						textura_desenha(j,D_CANO_S, pos_screen);
-					} else{
-						textura_desenha(j,E_CANO_S, pos_screen);
-					}
-					break;
-				}
 				case 'b': {
 					Vector2f pos_tiles = {.x = x, .y = y};
 					Vector2 pos_screen = posfloat_para_tela(pos_tiles);
@@ -143,13 +151,12 @@ void fases_desenha(Jogo * j){
 
 	desenha_vidas(j,  f->mario.vidas);
 	desenha_pontos(j, j->pontos);//desenha_pontos(j, f->mario.score);
-	desenha_num_fase(j, f->n_mapa);
-	desenha_nome_jogador(j, "XYZ");
-    // for (int y=FASE_ALTURA-TILES_CHAO; y < FASE_ALTURA; y++){
-	// 	for (int x=0; x<FASE_LARGURA; x++){
-	// 		tile_desenha(x,y, MAROON);
-	//     }
-    // }
+	desenha_num_fase(j);
+	desenha_nome_jogador(j);
+	desenha_cano_s(j,7,5);
+	desenha_cano_s(j,112,5);
+	desenha_canos_i (j);
+
 }
 
 bool fases_inicia(Jogo * j){
