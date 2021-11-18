@@ -451,7 +451,7 @@ void telajogo_logica(Jogo * j){
 	}
 
 	int fase_terminou = true;
-	printf("n_inimigos %d n_c + n_t %d", f->n_inimigos, (f->n_caranguejos+f->n_tartarugas));
+	// printf("n_inimigos %d n_c + n_t %d", f->n_inimigos, (f->n_caranguejos+f->n_tartarugas));
 	if (f->n_inimigos<(f->n_caranguejos+f->n_tartarugas)){
         fase_terminou = false;
 	}
@@ -475,6 +475,8 @@ void telajogo_logica(Jogo * j){
 }
 
 void telajogo_termina(Jogo * j){
+	highscore_salva(j);
+
 	free(j->tela_jogo);
 	j->tela_jogo = NULL;
 }

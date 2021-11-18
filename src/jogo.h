@@ -96,8 +96,12 @@ typedef struct TelaHighscoreInfo TelaHighscoreInfo;
 typedef struct TelaCarregaInfo TelaCarregaInfo;
 typedef struct TelaNomeInfo TelaNomeInfo;
 
+#define HIGHSCORE_NAME_SZ (3)
 
-
+typedef struct Highscore {
+	char nome[ 1 + HIGHSCORE_NAME_SZ ];
+	int score;
+} Highscore;
 
 typedef enum Direcao {
 	PARADO = 0,
@@ -290,5 +294,9 @@ void telahighscore_termina(Jogo * j);
 bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
 bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
 Rectangle mario_pos_to_screen_rect(Vector2 pos);
+
+bool highscore_grava_lista(Highscore * lista, int n_scores);
+bool highscore_salva(Jogo * j);
+bool highscore_carrega(Highscore ** retptr, int * retptr_sz);
 
 #endif /* JOGO_H */

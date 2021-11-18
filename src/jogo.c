@@ -123,11 +123,14 @@ void tela_inicia(Jogo * j){
             telajogo_inicia(j);
             break;
         case TELA_CARREGA:
-            telacarrega_inicia (j);
+            telacarrega_inicia(j);
             break;
         case TELA_NOME:
-            telanome_inicia (j);
+            telanome_inicia(j);
             break;
+		case TELA_HIGHSCORE:
+			telahighscore_inicia(j);
+			break;
 		default: break;
 	}
 }
@@ -145,7 +148,9 @@ void tela_desenha(Jogo * j){
         case TELA_NOME:
             telanome_desenha(j);
             break;
-		// ...
+		case TELA_HIGHSCORE:
+			telahighscore_desenha(j);
+			break;
 		default: break;
 	}
 }
@@ -163,7 +168,9 @@ void tela_entrada(Jogo * j){
         case TELA_NOME:
             telanome_entrada(j);
             break;
-		// ...
+		case TELA_HIGHSCORE:
+			telahighscore_entrada(j);
+			break;
 		default: break;
 	}
 }
@@ -181,7 +188,9 @@ void tela_logica(Jogo * j){
         case TELA_NOME:
             telanome_logica(j);
             break;
-		// ...
+		case TELA_HIGHSCORE:
+			telahighscore_logica(j);
+			break;
 		default: break;
 	}
 }
@@ -199,6 +208,9 @@ void tela_termina(Jogo * j){
         case TELA_NOME:
             telanome_termina(j);
             break;
+		case TELA_HIGHSCORE:
+			telahighscore_termina(j);
+			break;
 		default: break;
 	}
 }
