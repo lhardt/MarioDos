@@ -103,36 +103,37 @@ void cria_inimigo(Fase * f, Inimigo * retval){
 void desenha_inimigo(Jogo * j, Inimigo * inimigo){
 	Vector2 pos_inimigo = posfloat_para_tela(inimigo->pos);
 
-	if(inimigo->tipo == T_TARTARUGA){
-        if(inimigo->vulnerabilidade== V_VULNERAVEL){
-            textura_desenha(j, TARTARUGA_V, pos_inimigo );
-        }else{
-            if(inimigo->vel.x>=0){
-                textura_desenha(j, D_TARTARUGA2, pos_inimigo );
-            } else {
-                textura_desenha(j, E_TARTARUGA2, pos_inimigo );
+    if (inimigo->vivo){
+        if(inimigo->tipo == T_TARTARUGA){
+            if(inimigo->vulnerabilidade== V_VULNERAVEL){
+                textura_desenha(j, TARTARUGA_V, pos_inimigo );
+            }else{
+                if(inimigo->vel.x>=0){
+                    textura_desenha(j, D_TARTARUGA2, pos_inimigo );
+                } else {
+                    textura_desenha(j, E_TARTARUGA2, pos_inimigo );
+                }
+            }
+        }else if(inimigo->tipo == T_CARANGUEJO){
+            if(inimigo->vulnerabilidade== V_VULNERAVEL){
+                textura_desenha(j, CARANGUEJO_V, pos_inimigo );
+            }else if (inimigo->vulnerabilidade==V_FURIOSO){
+                if(inimigo->vel.x>=0){
+                    textura_desenha(j, D_CARANGUEJO_F, pos_inimigo );
+                }
+                else{
+                    textura_desenha(j, E_CARANGUEJO_F, pos_inimigo );
+                }
+            }else{
+                if(inimigo->vel.x>=0){
+                    textura_desenha(j, D_CARANGUEJO_I, pos_inimigo );
+                }
+                else{
+                    textura_desenha(j, E_CARANGUEJO_I, pos_inimigo );
+                }
             }
         }
-	} else if(inimigo->tipo == T_CARANGUEJO){
-        if(inimigo->vulnerabilidade== V_VULNERAVEL){
-            textura_desenha(j, CARANGUEJO_V, pos_inimigo );
-        }else if (inimigo->vulnerabilidade==V_FURIOSO){
-            if(inimigo->vel.x>=0){
-                textura_desenha(j, D_CARANGUEJO_F, pos_inimigo );
-            }
-            else{
-               textura_desenha(j, E_CARANGUEJO_F, pos_inimigo );
-            }
-        }else{
-            if(inimigo->vel.x>=0){
-                textura_desenha(j, D_CARANGUEJO_I, pos_inimigo );
-            }
-            else{
-               textura_desenha(j, E_CARANGUEJO_I, pos_inimigo );
-            }
-        }
-
-	}
+    }
 }
 
 void telajogo_inicia(Jogo * j){
@@ -298,17 +299,17 @@ void telajogo_entrada(Jogo * j){
 	}
     if(IsKeyDown(KEY_RIGHT) && IsKeyUp(KEY_LEFT)){
         mario->vel.x = 0.5;
-	    printf("KEY_RIGHT\t");
+	    //printf("KEY_RIGHT\t");
 	}
     if(IsKeyDown(KEY_LEFT) && IsKeyUp(KEY_RIGHT)){
         mario->vel.x = -0.5;
-	    printf("KEY_LEFT\t");
+	    //printf("KEY_LEFT\t");
 	}
 
-    printf("\nMario Pos: [%.2f , %.2f] Vel: [%.2f , %.2f] \n",
+    /*printf("\nMario Pos: [%.2f , %.2f] Vel: [%.2f , %.2f] \n",
         mario->pos.x, mario->pos.y,
         mario->vel.x, mario->vel.y
-    );
+    );*/
 
 }
 
@@ -318,7 +319,6 @@ void muda_velocidade(Fase * f, Vector2f * vel, Vector2f * pos, float pLargura, f
     } else{
         if(vel->y <= -GRAVIDADE && personagem_no_teto(f, pos, pLargura, pAltura)){
             vel->y = GRAVIDADE;
-            printf("muda pos x %f pos y %f", pos->x, pos->y);
         } else {
             vel->y += GRAVIDADE;
         }
@@ -347,9 +347,8 @@ bool inimigo_na_posicao(Inimigo * inimigo, Vector2f * pos_mario){//pegar tiles a
 	if(y_abaixo - ((int)y_abaixo) >= 0.25){
 		return false;}
 
-		printf("\ny_acima_m %d y_abaixo %d", (int)y_acima_m, (int)y_abaixo);
 
-	if ((int) y_acima_m == ((int) y_abaixo) +1){//maracutaia pra funcionar
+	if ((int) y_acima_m == ((int) y_abaixo) +1){//MARACUTAIA pra funcionar
         if((xi_inicial>= xm_inicial && xi_inicial<=xm_final) //se a posicao final do inimigo estiver entre as do mario
          || (xi_final>= xm_inicial && xi_final<=xm_final))// ou se a posicao inicial do inimigo estiver entre as do mario
            {
@@ -360,26 +359,26 @@ bool inimigo_na_posicao(Inimigo * inimigo, Vector2f * pos_mario){//pegar tiles a
 
 }
 
-/*bool mario_colide(Vector2f pos_mario, Vector2f pos_p, int largura, int altura){
-    int xm_inicial = (int) (pos_mario->x - MARIO_LARGURA/2 );
-	int xm_final   = (int) (pos_mario->x + MARIO_LARGURA/2 );
-    int ym_inicial = (int) (pos_mario->y - MARIO_ALTURA/2 );
-	int ym_final   = (int) (pos_mario->y + MARIO_ALTURA/2 );
+bool mario_colide(Vector2f pos_mario, Vector2f pos_p, int largura, int altura){
+    int xm_inicial = (int) (pos_mario.x - MARIO_LARGURA/2 );
+	int xm_final   = (int) (pos_mario.x + MARIO_LARGURA/2 );
+    int ym_inicial = (int) (pos_mario.y - MARIO_ALTURA/2 );
+	int ym_final   = (int) (pos_mario.y + MARIO_ALTURA/2 );
 
-    int xp_inicial = (int) (pos_p->x - largura/2 );
-	int xp_final   = (int) (pos_p->x + largura/2 );
-    int yp_inicial = (int) (pos_p->y - altura/2 );
-	int yp_final   = (int) (pos_p->y + altura/2 );
+    int xp_inicial = (int) (pos_p.x - largura/2 );
+	int xp_final   = (int) (pos_p.x + largura/2 );
+    int yp_inicial = (int) (pos_p.y - altura/2 );
+	int yp_final   = (int) (pos_p.y + altura/2 );
 
     if ((xm_inicial<=xp_final && xm_inicial>=xp_inicial)
-        || (xm_final>=xp_inical && xm_final<=xp_final ){
+        || (xm_final>=xp_inicial && xm_final<=xp_final )){
         if ((ym_inicial<=yp_final && ym_inicial>=yp_inicial)
-             || (ym_final<=yp_final && ym_inicial>=yp_inicial)){
+             || (ym_final<=yp_final && ym_final>=yp_inicial)){
             return true;
         }
     }
     return false;
-}*/
+}
 
 void telajogo_logica(Jogo * j){
 	Fase * f = & j->tela_jogo->fase;
@@ -387,7 +386,6 @@ void telajogo_logica(Jogo * j){
     muda_posicao(f);
 
     Mario * mario = & f->mario;
-
 
 
 	// Aumenta o número de inimigos.
@@ -399,6 +397,7 @@ void telajogo_logica(Jogo * j){
           ++(*n_inimigos_ptr);
 	}
 
+    //testa se mario bateu na plataforma onde acima está um inimigo e faz a lógica
 	for (int i=0; i<f->n_inimigos;i++){
         if(personagem_no_teto(f, &mario->pos, MARIO_LARGURA, MARIO_ALTURA)
            && inimigo_na_posicao(&f->inimigos[i], &mario->pos) && f->inimigos[i].vivo){
@@ -420,11 +419,28 @@ void telajogo_logica(Jogo * j){
         }
 	}
 
-	    muda_velocidade(f, & mario->vel, &mario->pos, MARIO_LARGURA, MARIO_ALTURA);
+    muda_velocidade(f, & mario->vel, &mario->pos, MARIO_LARGURA, MARIO_ALTURA);
 
+    //NÃO TO ENTENDENDO, ISSO É NECESSÁRIO? ELES MUDAM DE VELOCIDADE SE SIM, TEM QUE ARRUMAR PRO CARANGUEJO
 	for(int i = 0; i < f->n_inimigos; ++i){
 		Inimigo * inimigo  = &j->tela_jogo->fase.inimigos[i];
 		muda_velocidade(&j->tela_jogo->fase, & inimigo->vel, & inimigo->pos, TARTARUGA_LARGURA, TARTARUGA_ALTURA);
+	}
+
+	for (int i=0; i< f->n_inimigos;i++){
+        int largura, altura;
+        if (f->inimigos[i].tipo== T_TARTARUGA){
+            largura = TARTARUGA_LARGURA;
+            altura = TARTARUGA_ALTURA;
+        }else{
+            largura = CARANGUEJO_LARGURA;
+            altura = CARANGUEJO_ALTURA;
+        }
+        if (mario_colide(mario->pos, f->inimigos[i].pos,largura,altura)){
+            printf("mario colidiu");
+            f->inimigos[i].vivo=false;
+            (j->pontos) +=800;
+        }
 	}
 
 }
