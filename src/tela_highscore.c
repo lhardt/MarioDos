@@ -28,10 +28,35 @@ void telahighscore_desenha(Jogo * j){
     Rectangle textBox = {TELA_LARGURA/2.0f - 250, 300, 500, 50 };
     ClearBackground(BLACK);
     Vector2 pos = {.x=600, .y=200};
+
+    textura_desenha(j, E_MARIO1, (Vector2){.x=570, .y=100} );
+    textura_desenha(j, E_TARTARUGA2, (Vector2){.x=630, .y=112} );
+
+
     texto_centralizado(j->fonte_menu, "Highscores: ", pos, WHITE );
+    texto_centralizado(j->fonte_menu, "Pressione ENTER para voltar ao menu", (Vector2){.x=600,.y=580}, WHITE );
 
-    texto_centralizado(j->fonte_menu, "Pressione ENTER para voltar ao menu", (Vector2){.x=600,.y=500}, WHITE );
+    Highscore * scores;
+    int n_scores;
+    highscore_carrega(&scores, &n_scores);
+    char score_tmp_str[30];
 
+    for(int i = 0; i < 5 && i < n_scores; ++i){
+        sprintf(score_tmp_str, "%d", scores[i].score);
+
+        // DrawText(tela->arquivo, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
+        DrawTextEx(j->fonte_menu, scores[i].nome, (Vector2){.x=450, .y= 300 + 50*i}, 20, 3, GREEN);
+        DrawTextEx(j->fonte_menu, score_tmp_str, (Vector2){.x=650, .y= 300 + 50*i}, 20, 3, GREEN);
+
+        textura_desenha(j, MOEDA1, (Vector2){.x=400, .y= 300 + 50*i} );
+        textura_desenha(j, MOEDA1, (Vector2){.x=750, .y= 300 + 50*i} );
+    }
+
+    pos.x = TELA_LARGURA / 2;
+    pos.y = TELA_ALTURA - 50;
+    texto_centralizado(GetFontDefault(), "Algorítmos e Programação.", pos, WHITE);
+    pos.y += 20;
+    texto_centralizado(GetFontDefault(), "Ana Laura & Léo Hardt.", pos, WHITE);
 }
 
 void telahighscore_entrada(Jogo *j){
@@ -65,14 +90,18 @@ bool highscore_carrega(Highscore ** retptr, int * retptr_sz){
         printf("Não foi possível abrir o arquivo");
         *retptr = list;
         *retptr_sz = 0;
+        // O arquivo não existir ainda não implica
+        // que não dê para escrever nele
         return true;
     }
 
     int i = 0; bool read = true;
     for(i = 0; read ; ++i){
+        // Lê do arquivo
         read = (4 == fscanf(scores_file, "[%c%c%c,%d]\n",
             & list[i].nome[0], & list[i].nome[1], & list[i].nome[2], &list[i].score
         ));
+        // Se precisa de mais espaço, aloca mais 10.
         if(i % 10 && i > 0){
             Highscore * newlist = realloc(list, (11 + i) * sizeof(Highscore));
             if(newlist == NULL){
