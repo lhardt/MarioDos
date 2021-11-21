@@ -51,6 +51,8 @@ Rectangle get_spritesheet_pos(TexturaId textura){
             return (Rectangle){.x =11, .y = 215, .width = 32, .height=18};
         case D_CANO_I:
             return (Rectangle){.x =11, .y = 258, .width = 32, .height=18};
+        case CHAO:
+            return (Rectangle){.x =5, .y = 293, .width = 256, .height=15};
 		default:
 			TODO();
 	}
@@ -67,9 +69,7 @@ void texto_centralizado(Font font, char * text, Vector2 pos, Color cor){
 
 void textura_desenha(Jogo * j, TexturaId textura, Vector2 pos){
 	const double SCALE = 3.5;
-	// TODO: é mais útil pra gente usar x,y como coordenada
-	// do canto superior-esq do objeto ou como o centro dele? acho que centro, porque na hora de verificar
-	// se tal coisa encostou em tal acho mais fácil se basear no centro (?)
+	// usando x,y como o centro do objeto
 	Rectangle rect_textura = get_spritesheet_pos(textura);
 	Rectangle rect_final = {.x = pos.x, .y = pos.y,
 						    .width = SCALE * rect_textura.width,

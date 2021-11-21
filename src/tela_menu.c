@@ -43,14 +43,12 @@ void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
         case O_NOVO_JOGO:
             strcpy(j->nome_fase, "fase1.txt");
             j->num_fase = 1;
-            j->pontos =0;
             jogo_troca_tela(j, TELA_NOME);
             break;
         case O_CONTINUAR:
 			jogo_troca_tela(j, TELA_NOME);
 			break;
 		case O_CARREGAR_MAPA:
-            j->pontos =0;
             j->num_fase =-1;
 		    jogo_troca_tela(j, TELA_CARREGA);
 		    break;
@@ -114,6 +112,9 @@ void telamenu_inicia(Jogo * j){
     j->tela_menu->cores[1] = BLUE;
 	j->tela_menu->options[0] = 1;
 	j->tela_menu->selecionada=0;
+
+	j->pontos =0;
+	j->num_power =0;
 }
 
 void telamenu_desenha(Jogo * j){

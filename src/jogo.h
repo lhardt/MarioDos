@@ -37,6 +37,8 @@
 #define POS_VIDAS_Y	  		(25)
 #define POS_VIDAS_ESPACO	(35)
 
+#define NMAX_POWER 3
+
 /* Estava esticando todas as texturas por 4.5 mas 3.5 parece ficar melhor. */
 #define TILE_SCALE  (3.5)
 /* Tamanho EM TILES! */
@@ -191,8 +193,10 @@ typedef struct Jogo {
 	char nome_fase[50];
 	//Número da fase
 	int num_fase;
+	//Número de vezes que o botão power foi usado
+	int num_power;
 	// Se o jogo deve fechar no próximo loop.
-	bool		sair;
+	bool sair;
 	// Qualquer informação que a tela atual queira guardar
 	// ficaria aqui. Para a tela menu, por exemplo, pode ser
 	// a opção do menu selecionada.
@@ -287,6 +291,7 @@ void telahighscore_termina(Jogo * j);
 
 bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
 bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
+bool mario_no_power(Fase * fase);
 Rectangle mario_pos_to_screen_rect(Vector2 pos);
 
 bool highscore_grava_lista(Highscore * lista, int n_scores);

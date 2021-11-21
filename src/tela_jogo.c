@@ -435,6 +435,21 @@ void cria_moeda(Fase * f, Moeda * moeda ){
     }
 }
 
+void muda_vulnerabilidade(Jogo *j, Inimigo * i){
+
+    if (i->vulnerabilidade == V_FURIOSO){// O CARANGUEJO TÁ INDO DIRETO DE FURIOSO PRA VULNERÁVEL
+        // E EU ACHO QUE É PORQUE A FUNÇÃO É EXECUTADA DUAS VEZES NA MESMA POSIÇÃO, VIDE OS PONTOS AO BATER NUM CARANGUEJO
+        i->vulnerabilidade = V_INVULNERAVEL;
+        (j->pontos) +=10;
+        i->vel.x = i->vel.x*0.7;// velocidade é 70% da velocidade original
+    }
+    else if (i->vulnerabilidade == V_INVULNERAVEL){
+        i->vulnerabilidade = V_VULNERAVEL;
+        i->vel.x =0;
+        (j->pontos) +=10;
+    }
+}
+
 void telajogo_logica(Jogo * j){
 	Fase * f = & j->tela_jogo->fase;
 
@@ -461,21 +476,24 @@ void telajogo_logica(Jogo * j){
 	for (int i=0; i<f->n_inimigos;i++){
         if(personagem_no_teto(f, &mario->pos, MARIO_LARGURA, MARIO_ALTURA)
            && inimigo_na_posicao(&f->inimigos[i], &mario->pos) && f->inimigos[i].vivo){
-
-            if (f->inimigos[i].vulnerabilidade == V_FURIOSO){// O CARANGUEJO TÁ INDO DIRETO DE FURIOSO PRA VULNERÁVEL
-                // E EU ACHO QUE É PORQUE A FUNÇÃO É EXECUTADA DUAS VEZES NA MESMA POSIÇÃO, VIDE OS PONTOS AO BATER NUM CARANGUEJO
-                f->inimigos[i].vulnerabilidade = V_INVULNERAVEL;
-                (j->pontos) +=10;
-                f->inimigos[i].vel.x =f->inimigos[i].vel.x*0.7;// velocidade é 70% da velocidade original
-                printf("\npontos2 %d", j->pontos);
-            }
-            if (f->inimigos[i].vulnerabilidade == V_INVULNERAVEL){
-                f->inimigos[i].vulnerabilidade = V_VULNERAVEL;
-                f->inimigos[i].vel.x =0;
-                (j->pontos) +=10;
-            }
+            muda_vulnerabilidade(j, &f->inimigos[i]);
         }
 	}
+    //Lógica botão power
+	if(mario_no_power(f) && j->ticks % 5 ==0 && j->num_power<NMAX_POWER){
+        for (int i=0; i<f->n_inimigos;i++){
+            if(f->inimigos[i].vulnerabilidade!=V_VULNERAVEL){
+                muda_vulnerabilidade(j, &f->inimigos[i] );
+            }
+        }
+        for (int i=0; i<f->n_moedas;i++){
+            if (!(f->moedas[i].coletada)){
+                f->moedas[i].coletada = true;
+                j->pontos +=1;
+            }
+        }
+        (j->num_power) +=1;
+    }
 
     // Muda velocidades
     muda_velocidade(f, & mario->vel, &mario->pos, MARIO_LARGURA, MARIO_ALTURA);

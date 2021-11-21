@@ -21,8 +21,8 @@ typedef enum TexturaId {
 	T_CORACAO,
 	T_POW,
 	E_CANO_I,
-	D_CANO_I
-
+	D_CANO_I,
+	CHAO
 	// TODO
 	// mario parado, mario direita, mario caindo etc etc etc.
 } TexturaId;

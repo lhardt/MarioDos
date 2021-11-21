@@ -192,6 +192,8 @@ void fases_desenha(Jogo * j){
 	desenha_pontos(j, j->pontos);//desenha_pontos(j, f->mario.score);
 	desenha_num_fase(j);
 	desenha_nome_jogador(j);
+	textura_desenha(j, CHAO, (Vector2){.x = 450, .y = 675});
+	textura_desenha(j, CHAO, (Vector2){.x = 1345, .y = 675});
 	//desenha_cano_s(j,7,5);
 	//desenha_cano_s(j,112,5);
 	//desenha_canos_i (j);
@@ -207,6 +209,22 @@ void fases_termina(Jogo * j){
 	TODO();
 }
 
+bool mario_no_power (Fase * fase){
+	Vector2f pos = fase->mario.pos;
+
+	// Margem de 0.1 porque o chão é no próximo tile.
+	double y_acima  = pos.y - MARIO_ALTURA/2 - 0.1;
+	int x_inicial = (int) (pos.x - MARIO_LARGURA/2 );
+	int x_final   = (int) (pos.x + MARIO_LARGURA/2 );
+
+	bool result = false;
+	for(int x = x_inicial; x <= x_final && result == false; ++x){
+		result |= (fase->mapa[(int)y_acima][x]  == 'b') || (fase->mapa[(int)y_acima][x-1]  == 'b') ||
+		(fase->mapa[(int)y_acima][x-2]  == 'b') || (fase->mapa[(int)y_acima][x+1]  == 'b') ;
+	}
+	return result;
+}
+
 
 bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura){
 	Vector2f pos_mario = fase->mario.pos;
@@ -218,7 +236,7 @@ bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltu
 
 	bool result = false;
 	for(int x = x_inicial; x <= x_final && result == false; ++x){
-		result |= (fase->mapa[(int)y_acima][x]  == 'p');
+		result |= (fase->mapa[(int)y_acima][x]  == 'p') || (fase->mapa[(int)y_acima][x]  == 'b');
 	}
 	return result;
 }
@@ -245,7 +263,7 @@ bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltu
 	//  Quando encontrar, sai do loop .
 	bool result = false;
 	for(int x = x_inicial; x <= x_final && result == false; ++x){
-		result |= (fase->mapa[(int)y_abaixo][x]  == 'p');
+		result |= (fase->mapa[(int)y_abaixo][x]  == 'p') || (fase->mapa[(int)y_abaixo][x]  == 'b');
 	}
 	return result;
 }
