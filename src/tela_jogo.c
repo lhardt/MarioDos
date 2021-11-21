@@ -77,7 +77,7 @@ void cria_inimigo(Fase * f, Inimigo * retval){
 
     if(retval->tipo==T_CARANGUEJO){
         retval->vulnerabilidade= V_FURIOSO;
-        retval->vel.x = 0.3;
+        retval->vel.x = 0.3 * f->n_mapa;
         (f->n_caranguejos)--;
     }
     else{
@@ -141,12 +141,13 @@ void telajogo_inicia(Jogo * j){
 	// inicializado com 0000, então todas as outras
 	// opções estarão em branco.
 	j->tela_jogo = calloc(1, sizeof(TelaJogoInfo));
-	//j->tela_jogo->fase.n_mapa = 1;// Depois tem que mudar pra funcionar com os jogos carregados, mas por padr�o come�a em 0
+	j->tela_jogo->fase.n_mapa = j->num_fase;
 
     j->tela_jogo->fase.mario.vel.x = 0;
     j->tela_jogo->fase.mario.vel.y = 0.1;
 
     j->tela_jogo->fase.n_inimigos =0;
+    j->tela_jogo->fase.n_moedas =0;
 
 	srand(time(NULL));
 	//j->tela_jogo->fase.n_inimigos = 1;
@@ -177,20 +178,23 @@ void conserta_nova_posicao(Fase *f, Vector2f *vel, Vector2f * antigaPos, char ti
             pLargura = CARANGUEJO_LARGURA;
             pAltura = CARANGUEJO_ALTURA;
 	        break;
+        case 'D':
+            pLargura = MOEDA_LARGURA;
+            pAltura = MOEDA_ALTURA;
     }
 
-    if (tipo != 'M' && antigaPos->y > 24){ //se for inimigo e estiver no chão
+    if (tipo != 'M' && antigaPos->y > 24){ //se for inimigo ou moeda e estiver no chão
         //chegando fim direita embaixo
         if (vel->x>0 && antigaPos->x+pLargura/2 >FASE_LARGURA){
             novaPosicao->x = FASE_LARGURA - DIST_CANOS;
             novaPosicao->y = ALTURA_CANOS;
-            vel->x = vel->x *-1;// MUDAR DIREÇÃO?
+            vel->x = vel->x *-1;// MUDAR DIREÇÃO
         }
         //chegando fim esquerda embaixo
         if (vel->x<0 && antigaPos->x-pLargura/2 < 0){
             novaPosicao->x = DIST_CANOS;
             novaPosicao->y = ALTURA_CANOS;
-            vel->x = vel->x *-1;// MUDAR DIREÇÃO?
+            vel->x = vel->x *-1;// MUDAR DIREÇÃO
         }
     }
 
@@ -253,6 +257,32 @@ void muda_posicao(Fase *f){
         inimigo->pos.x = novaPosicao.x;
         inimigo->pos.y = novaPosicao.y;
     }
+
+    for (int x=0; x < f->n_moedas;x++){
+        Moeda * moeda = &f->moedas[x];
+        novaPosicao = moeda->pos;
+        novaPosicao.x += moeda->vel.x;
+        novaPosicao.y += moeda->vel.y;
+
+        conserta_nova_posicao(f, &moeda->vel, &moeda->pos,'D', &novaPosicao);
+
+        moeda->pos.x = novaPosicao.x;
+        moeda->pos.y = novaPosicao.y;
+    }
+
+}
+
+void desenha_moeda(Jogo *j, Moeda * moeda){
+    Vector2 pos_moeda = posfloat_para_tela(moeda->pos);
+    if (!(moeda->coletada)){
+        if(j->ticks %5 ==0){
+            textura_desenha(j, MOEDA1, pos_moeda);
+        }
+        else{
+            textura_desenha(j, MOEDA2, pos_moeda );
+        }
+
+    }
 }
 
 void telajogo_desenha(Jogo * j){
@@ -271,8 +301,9 @@ void telajogo_desenha(Jogo * j){
 	for(int i = 0; i < n_inimigos; ++i){
 		desenha_inimigo(j, &j->tela_jogo->fase.inimigos[i]);
 	}
-    // //printf("\n  vel pos tartaruga %f %f %f %f", tartaruga->vel.x, tartaruga->vel.y, tartaruga->pos.x, tartaruga->pos.y );
-    // //Desenha tartaruga
+	for(int i = 0; i < j->tela_jogo->fase.n_moedas; ++i){
+		desenha_moeda(j, &j->tela_jogo->fase.moedas[i]);
+	}
 
 }
 
@@ -389,6 +420,21 @@ void tipo_largura_altura(double * largura, double *altura, Inimigo * inimigo){
     }
 }
 
+void cria_moeda(Fase * f, Moeda * moeda ){
+    moeda->pos.y = 7.5;
+	moeda->vel.y = 0.5;
+	moeda->vel.x = 0.3 * f->n_mapa;
+    int alternado_aleatorio = (1 + (rand() % 100)) % 2;
+    moeda->coletada = false;
+
+    if (alternado_aleatorio){
+        moeda->pos.x = 11;
+    }
+    else{
+        moeda->vel.x = (moeda->vel.x)*-1;
+        moeda->pos.x = 100;
+    }
+}
 
 void telajogo_logica(Jogo * j){
 	Fase * f = & j->tela_jogo->fase;
@@ -397,7 +443,6 @@ void telajogo_logica(Jogo * j){
 
     Mario * mario = & f->mario;
 
-
 	// Aumenta o número de inimigos.
 
 	// NOTE: n_ticks está em 1/60 de segundo
@@ -405,6 +450,12 @@ void telajogo_logica(Jogo * j){
 		int * n_inimigos_ptr = & j->tela_jogo->fase.n_inimigos;
 		cria_inimigo(& j->tela_jogo->fase, & j->tela_jogo->fase.inimigos[*n_inimigos_ptr]);
           ++(*n_inimigos_ptr);
+	}
+    // Aumenta o número de moedas.
+	if(j->ticks % (f->delay * 80) == 0 && f->n_moedas< (f->n_caranguejos + f->n_tartarugas + f->n_inimigos)){
+		int * n_moedas_ptr = & j->tela_jogo->fase.n_moedas;
+		cria_moeda(& j->tela_jogo->fase, & j->tela_jogo->fase.moedas[*n_moedas_ptr]);
+        (*n_moedas_ptr) +=1;
 	}
 
     //testa se mario bateu na plataforma onde acima está um inimigo e faz a lógica
@@ -415,26 +466,36 @@ void telajogo_logica(Jogo * j){
             if (f->inimigos[i].vulnerabilidade == V_FURIOSO){// O CARANGUEJO TÁ INDO DIRETO DE FURIOSO PRA VULNERÁVEL
                 // E EU ACHO QUE É PORQUE A FUNÇÃO É EXECUTADA DUAS VEZES NA MESMA POSIÇÃO, VIDE OS PONTOS AO BATER NUM CARANGUEJO
                 f->inimigos[i].vulnerabilidade = V_INVULNERAVEL;
-              printf("\npontos1 %d", j->pontos);
-              (j->pontos) +=10;
-              printf("\npontos2 %d", j->pontos);
+                (j->pontos) +=10;
+                f->inimigos[i].vel.x =f->inimigos[i].vel.x*0.7;// velocidade é 70% da velocidade original
+                printf("\npontos2 %d", j->pontos);
             }
             if (f->inimigos[i].vulnerabilidade == V_INVULNERAVEL){
                 f->inimigos[i].vulnerabilidade = V_VULNERAVEL;
                 f->inimigos[i].vel.x =0;
-              printf("\npontos1 %d", j->pontos);
-              (j->pontos) +=10;
-              printf("\npontos2 %d", j->pontos);
+                (j->pontos) +=10;
             }
         }
 	}
 
     muda_velocidade(f, & mario->vel, &mario->pos, MARIO_LARGURA, MARIO_ALTURA);
 
-    //NÃO TO ENTENDENDO, ISSO É NECESSÁRIO? SE SIM, TEM QUE ARRUMAR PRO CARANGUEJO
+    for(int i = 0; i < f->n_moedas; ++i){
+		Moeda * moeda  = &j->tela_jogo->fase.moedas[i];
+        muda_velocidade(&j->tela_jogo->fase, & moeda->vel, & moeda->pos, MOEDA_LARGURA, MOEDA_ALTURA);
+
+	}
+
+
 	for(int i = 0; i < f->n_inimigos; ++i){
 		Inimigo * inimigo  = &j->tela_jogo->fase.inimigos[i];
-		muda_velocidade(&j->tela_jogo->fase, & inimigo->vel, & inimigo->pos, TARTARUGA_LARGURA, TARTARUGA_ALTURA);
+		if (inimigo->tipo==T_TARTARUGA){
+            muda_velocidade(&j->tela_jogo->fase, & inimigo->vel, & inimigo->pos, TARTARUGA_LARGURA, TARTARUGA_ALTURA);
+		}
+		else{
+            muda_velocidade(&j->tela_jogo->fase, & inimigo->vel, & inimigo->pos, CARANGUEJO_LARGURA, CARANGUEJO_ALTURA);
+		}
+
 	}
 
 	for (int i=0; i< f->n_inimigos;i++){
@@ -446,7 +507,7 @@ void telajogo_logica(Jogo * j){
             (j->pontos) +=800;
         }
         else if(j->ticks % 20 == 0 && mario_colide(mario->pos, f->inimigos[i].pos,largura,altura) && !(f->inimigos[i].vulnerabilidade==V_VULNERAVEL)){
-            mario->vidas -=1; //ALGUM PROBLEMA DE COLIDIR DEMAIS E TIRAR VIDAS DEMAIS AQUI
+            mario->vidas -=1;
 
         }
 	}

@@ -49,6 +49,9 @@
 #define CARANGUEJO_LARGURA ( TILE_SCALE * 15  / TILE_LARGURA)
 #define CARANGUEJO_ALTURA ( TILE_SCALE * 13 / TILE_ALTURA)
 
+#define MOEDA_LARGURA ( TILE_SCALE * 8  / TILE_LARGURA)
+#define MOEDA_ALTURA ( TILE_SCALE * 11 / TILE_ALTURA)
+
 /*Quantidade de tiles que formam a altura do chão. Ex. 2 =, das 28 linhas da tela, 2 são chão*/
 #define TILES_CHAO 2
 
@@ -103,18 +106,14 @@ typedef struct Highscore {
 	int score;
 } Highscore;
 
-typedef enum Direcao {
-	PARADO = 0,
-	DIR_L,
-	DIR_R,
-	DIR_U,
-	DIR_D
-} Direcao;
-
+typedef struct Vector2f {
+	double x,y;
+} Vector2f;
 
 typedef struct Moeda {
-	Vector2 posicao;
-	Direcao direcao;
+	Vector2f pos;
+	Vector2f vel;
+    bool coletada;
 } Moeda;
 
 
@@ -130,16 +129,11 @@ typedef enum Vulnerabilidade {
 	V_VULNERAVEL,
 } Vulnerabilidade;
 
-typedef struct Vector2f {
-	double x,y;
-} Vector2f;
-
 typedef struct Inimigo {
 	TipoInimigo tipo;
 	bool vivo;
 	Vector2f pos;
 	Vector2f vel;
-	Direcao direcao;
 
 	Vulnerabilidade vulnerabilidade; /* TODO: nome mais curto? */
 
