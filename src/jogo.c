@@ -67,7 +67,6 @@ void jogo_troca_tela(Jogo * j, Tela nova_tela){
 
 bool fonte_inicia(Jogo * j){
 	j->fonte_menu = LoadFont(CAMINHO_FONTE_MENU);
-	// Não temos como conferir se a fonte carregou?
 	return true;
 }
 
@@ -106,7 +105,6 @@ void sons_termina(Jogo * j){
 
 bool imagens_inicia(Jogo * j){
 	j->spritesheet = LoadTexture(CAMINHO_SPRITESHEET);
-	// TODO: não temos uma forma de ver se carregou corretamente?
 	return j->spritesheet.format != 0;
 }
 void imagens_termina(Jogo * j){
@@ -131,6 +129,9 @@ void tela_inicia(Jogo * j){
 		case TELA_HIGHSCORE:
 			telahighscore_inicia(j);
 			break;
+        case TELA_INFORMACOES:
+			telainformacoes_inicia(j);
+			break;
 		default: break;
 	}
 }
@@ -150,6 +151,9 @@ void tela_desenha(Jogo * j){
             break;
 		case TELA_HIGHSCORE:
 			telahighscore_desenha(j);
+			break;
+        case TELA_INFORMACOES:
+			telainformacoes_desenha(j);
 			break;
 		default: break;
 	}
@@ -171,6 +175,9 @@ void tela_entrada(Jogo * j){
 		case TELA_HIGHSCORE:
 			telahighscore_entrada(j);
 			break;
+        case TELA_INFORMACOES:
+			telainformacoes_entrada(j);
+			break;
 		default: break;
 	}
 }
@@ -191,6 +198,9 @@ void tela_logica(Jogo * j){
 		case TELA_HIGHSCORE:
 			telahighscore_logica(j);
 			break;
+        case TELA_INFORMACOES:
+			telainformacoes_logica(j);
+			break;
 		default: break;
 	}
 }
@@ -210,6 +220,9 @@ void tela_termina(Jogo * j){
             break;
 		case TELA_HIGHSCORE:
 			telahighscore_termina(j);
+			break;
+        case TELA_INFORMACOES:
+			telainformacoes_termina(j);
 			break;
 		default: break;
 	}

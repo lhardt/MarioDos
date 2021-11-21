@@ -28,7 +28,7 @@
 /* Definidos nas especificaçoes 3.2 (pg.4) 3.13 (pg.5) */
 #define HIGHSCORES_NUM (5)
 
-/*Alterar conforme quiser. É mais fácil que (re-)alocar memória */
+/*Alterar conforme quiser. */
 #define NMAX_MOEDAS   (100)
 #define NMAX_INIMIGOS (100)
 #define NMAX_CANOS    ( 5 )
@@ -39,7 +39,6 @@
 
 #define NMAX_POWER 3
 
-/* Estava esticando todas as texturas por 4.5 mas 3.5 parece ficar melhor. */
 #define TILE_SCALE  (3.5)
 /* Tamanho EM TILES! */
 #define MARIO_LARGURA ( TILE_SCALE*16.0 / TILE_LARGURA )
@@ -71,8 +70,7 @@ typedef enum Tela {
 	TELA_CARREGA,
 	TELA_NOME,
 	TELA_HIGHSCORE,
-	TELA_AJUDA,
-	TELA_SOBRE,
+	TELA_INFORMACOES,
 	TELA_NENHUMA
 } Tela;
 
@@ -96,10 +94,11 @@ enum SoundId {
  * Cada uma dessas estruturas pode ser encontrada em seu respectivo
  * arquivo (tela_menu.c, tela_jogo.c, etc.)*/
 typedef struct TelaMenuInfo TelaMenuInfo;
-//typedef struct TelaJogoInfo TelaJogoInfo;
+typedef struct TelaJogoInfo TelaJogoInfo;
 typedef struct TelaHighscoreInfo TelaHighscoreInfo;
 typedef struct TelaCarregaInfo TelaCarregaInfo;
 typedef struct TelaNomeInfo TelaNomeInfo;
+typedef struct TelaInformacoesInfo TelaInformacoesInfo;
 
 #define HIGHSCORE_NAME_SZ (3)
 
@@ -137,10 +136,7 @@ typedef struct Inimigo {
 	Vector2f pos;
 	Vector2f vel;
 
-	Vulnerabilidade vulnerabilidade; /* TODO: nome mais curto? */
-
-	/* NOTE: já que a velocidade depende inteiramente
-	* do tipo e do level, não precisamos dela aqui.  */
+	Vulnerabilidade vulnerabilidade;
 } Inimigo;
 
 
@@ -206,6 +202,7 @@ typedef struct Jogo {
 		TelaHighscoreInfo * tela_highscore;
 		TelaCarregaInfo *   tela_carrega;
 		TelaNomeInfo*       tela_nome;
+		TelaInformacoesInfo * tela_informacoes;
 	};
 } Jogo;
 
@@ -288,6 +285,12 @@ void telahighscore_desenha(Jogo * j);
 void telahighscore_entrada(Jogo * j);
 void telahighscore_logica(Jogo * j);
 void telahighscore_termina(Jogo * j);
+
+void telainformacoes_inicia(Jogo * j);
+void telainformacoes_desenha(Jogo * j);
+void telainformacoes_entrada(Jogo * j);
+void telainformacoes_logica(Jogo * j);
+void telainformacoes_termina(Jogo * j);
 
 bool personagem_no_teto(Fase * fase, Vector2f * pos, float pLargura, float pAltura);
 bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltura);

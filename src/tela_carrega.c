@@ -4,9 +4,7 @@
  *
  * (C) 2021 Ana Laura e Léo Hardt.
  *
- * Este arquivo contém as definições da tela de menu do jogo.
- * é nesta tela em que o jogo inicia, e nela o usuário pode
- * escolher jogar, carregar mapas, etc.
+ * O usuário pode digitar o nome de um arquivo .txt para carregar
  */
 
 #include "jogo.h"
@@ -32,7 +30,7 @@ void telacarrega_desenha(Jogo * j){
     Rectangle textBox = {TELA_LARGURA/2.0f - 250, 300, 500, 50 };
     ClearBackground(BLACK);
     Vector2 pos = {.x=600, .y=200};
-    texto_centralizado(j->fonte_menu, "Insira o nome do arquivo: ", pos, WHITE );
+    texto_centralizado(j->fonte_menu, "Insira o nome do arquivo .txt: ", pos, WHITE );
     DrawRectangleRec(textBox, LIGHTGRAY);
 
     texto_centralizado(j->fonte_menu, "Pressione ENTER!", (Vector2){.x=600,.y=500}, WHITE );

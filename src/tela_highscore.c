@@ -16,7 +16,6 @@
 struct TelaHighscoreInfo {
     Highscore * scores;
     int n_highscores;
-
 };
 
 void telahighscore_inicia(Jogo * j){
@@ -24,8 +23,6 @@ void telahighscore_inicia(Jogo * j){
 }
 
 void telahighscore_desenha(Jogo * j){
-    TelaHighscoreInfo * tela = j->tela_highscore;
-    Rectangle textBox = {TELA_LARGURA/2.0f - 250, 300, 500, 50 };
     ClearBackground(BLACK);
     Vector2 pos = {.x=600, .y=200};
 
@@ -44,7 +41,6 @@ void telahighscore_desenha(Jogo * j){
     for(int i = 0; i < 5 && i < n_scores; ++i){
         sprintf(score_tmp_str, "%d", scores[i].score);
 
-        // DrawText(tela->arquivo, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
         DrawTextEx(j->fonte_menu, scores[i].nome, (Vector2){.x=450, .y= 300 + 50*i}, 20, 3, GREEN);
         DrawTextEx(j->fonte_menu, score_tmp_str, (Vector2){.x=650, .y= 300 + 50*i}, 20, 3, GREEN);
 
@@ -54,13 +50,12 @@ void telahighscore_desenha(Jogo * j){
 
     pos.x = TELA_LARGURA / 2;
     pos.y = TELA_ALTURA - 50;
-    texto_centralizado(GetFontDefault(), "Algorítmos e Programação.", pos, WHITE);
+    texto_centralizado(GetFontDefault(), "Algoritmos e Programação.", pos, WHITE);
     pos.y += 20;
     texto_centralizado(GetFontDefault(), "Ana Laura & Léo Hardt.", pos, WHITE);
 }
 
 void telahighscore_entrada(Jogo *j){
-    TelaHighscoreInfo * tela = j->tela_highscore;
     if (IsKeyPressed(KEY_ENTER)){
         jogo_troca_tela(j, TELA_MENU);
     }
@@ -115,7 +110,6 @@ bool highscore_carrega(Highscore ** retptr, int * retptr_sz){
     }
     int n_lidos = i - 1;
 
-    printf("Read %d scores.\n", n_lidos);
     fclose(scores_file);
 
     *retptr = list;
@@ -165,7 +159,6 @@ bool highscore_salva(Jogo * j){
 }
 
 bool highscore_grava_lista(Highscore * list, int n_scores){
-    printf("grava lista chamado com %d!\n", n_scores);
     ASSERT(list != NULL || n_scores <= 0);
     FILE * file = fopen("highscores.bin", "wb");
     if( file == NULL ) return false;

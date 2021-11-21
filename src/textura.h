@@ -23,8 +23,6 @@ typedef enum TexturaId {
 	E_CANO_I,
 	D_CANO_I,
 	CHAO
-	// TODO
-	// mario parado, mario direita, mario caindo etc etc etc.
 } TexturaId;
 
 void textura_desenha(Jogo * j, TexturaId textura, Vector2 pos);

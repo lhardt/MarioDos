@@ -16,7 +16,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h> // TEMPORARIO PRA DEBUG
+#include <stdio.h>
 
 #define OPTIONS 7
 
@@ -37,9 +37,6 @@ struct TelaMenuInfo {
 	TelaMenuOption selecionada;
 };
 
-// NOTE: Antigo escolheTela(). Não sei se o que eu fiz é o melhor modelo
-// Mas se fossemos divorciar o handling do 'escolheTela', acabaríamos tendo
-// que verificar se opcao == O_SAIR duas vezes.
 void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
     switch (opcao){
         case O_NOVO_JOGO:
@@ -49,9 +46,7 @@ void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
             break;
         case O_CONTINUAR:
             jogo_troca_tela(j, TELA_JOGO);
-
             carrega_save(j);
-
 			break;
 		case O_CARREGAR_MAPA:
             j->num_fase =-1;
@@ -61,15 +56,18 @@ void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
 		    jogo_troca_tela(j,TELA_HIGHSCORE);
 		    break;
 		case O_AJUDA:
+		    j->num_fase =0;
+		    jogo_troca_tela(j,TELA_INFORMACOES);
+		    break;
 		case O_SOBRE:
-			TODO();
+		    j->num_fase =1;
+			jogo_troca_tela(j,TELA_INFORMACOES);
 			break;
 		case O_SAIR:
-
 			j->sair=true;
 			break;
 		default:
-			ASSERT(false /* ? */);
+			ASSERT(false);
 	        break;
     }
 
@@ -77,13 +75,7 @@ void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
 }
 
 void trocarSelecionada(int upDown, int *options, TelaMenuOption *selecionada){
-    /*int selecionada = -1;
 
-    for (int x=0; x<OPTIONS && selecionada==-1;x++ ){
-        if (options[x] !=0){
-            selecionada = x;
-        }
-    }*/
      options[(*selecionada)]=0;
     if(upDown==1){  //KEY_DOWN
         if (*selecionada == OPTIONS-1){ // Se selecionada é a última opção
@@ -131,7 +123,6 @@ void telamenu_desenha(Jogo * j){
 
 	TelaMenuInfo * tela = j->tela_menu;
 
-	// NOTE: isso pode ser feito com um FOR. Cada elemento fica a uma altura fixa dos outros.
 	char * texts[] = {"Novo Jogo", "Continuar", "Carregar mapa", "Ranking", "Ajuda", "Sobre", "Sair"};
 	for (int x=0; x< OPTIONS; x++){
         pos.y +=40;
@@ -140,7 +131,7 @@ void telamenu_desenha(Jogo * j){
 
 	pos.x = TELA_LARGURA / 2;
 	pos.y = TELA_ALTURA - 50;
-	texto_centralizado(GetFontDefault(), "Algorítmos e Programação.", pos, WHITE);
+	texto_centralizado(GetFontDefault(), "Algoritmos e Programação.", pos, WHITE);
 	pos.y += 20;
 	texto_centralizado(GetFontDefault(), "Ana Laura & Léo Hardt.", pos, WHITE);
 
@@ -164,7 +155,7 @@ void telamenu_entrada(Jogo * j){
 }
 
 void telamenu_logica(Jogo * j){
-	// Animação de início caberia aqui.
+
 }
 
 void telamenu_termina(Jogo * j){

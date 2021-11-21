@@ -52,7 +52,6 @@ void desenha_mario(Jogo * j, Mario * mario){
 }
 
 void cria_inimigo(Fase * f, Inimigo * retval){
-	// TODO: acredito que tenhamos que trocar de cano,
 
 	retval->pos.y = 7.5;
 	retval->vel.y = 0.5;
@@ -151,7 +150,6 @@ void telajogo_inicia(Jogo * j){
     j->tela_jogo->fase.n_moedas =0;
 
 	srand(time(NULL));
-	//j->tela_jogo->fase.n_inimigos = 1;
 
 	load_fases(& j->tela_jogo->fase, j->nome_fase);
 
@@ -210,12 +208,10 @@ void conserta_nova_posicao(Fase *f, Vector2f *vel, Vector2f * antigaPos, char ti
     if (vel->x<0 && antigaPos->x-pLargura/2 < 0){
         novaPosicao->x = FASE_LARGURA;
     }
-    // TODO: aqui eu só supus que ele tá caindo (novaY > antigaY).
-    // Talvez dê pra fazer um IF e dois FORs quase iguais, embora eu ache
-    // mais raro de acotnecer (ele nunca vai pegar muita velocidade na subida)
+
+
     for(double y = antigaPos->y; y < novaPosicao->y; ++y){
         // Se no meio do caminho vertical tiver um bloco, ele deve parar antes.
-        // printf("Vai acessar o mapa em [%d %d]", (int) (y+0.5), (int) (mario->pos.x + 0.5));
         if( f->mapa[ (int) (y + pAltura/2) ][ (int) (antigaPos->x) ]  == 'p'){
             // Se for uma plataforma, é uma altura 'antes' dessa,
             // Entrega a altura desfazendo um passo.
@@ -224,11 +220,6 @@ void conserta_nova_posicao(Fase *f, Vector2f *vel, Vector2f * antigaPos, char ti
             vel->y = 0;
         }
     }
-    // TODO: ver se não há paredes também;
-    // Sugiro testar com mapa personalizado (de preferencia com uma queda grande)
-
-    // Se não teve que interferir, que bom :)
-
 }
 
 void muda_posicao(Fase *f){
@@ -308,15 +299,10 @@ void telajogo_desenha(Jogo * j){
 }
 
 void telajogo_entrada(Jogo * j){
-	TelaJogoInfo * tela = j->tela_jogo;
     Mario * mario = & j->tela_jogo->fase.mario;
 
 
-    // NOTE: Aqui não precisa de else. Se eu segurar LEFT+RIGHT,
-    // a consequência sem o else é ficar parado.
-    // Com o ELSE, ele só ativaria o que vier primeiro no código.
-
-    // NOTE2: IsKeyPressed detecta uma vez ao pressionar. IsKeyDown detecta até soltar.
+    // NOTE: IsKeyPressed detecta uma vez ao pressionar. IsKeyDown detecta até soltar.
 
     // Ele só se mexe para os lados se o jogador quiser. Total liberdade aí.
     // Então se ele não cair num dos IFs abaixo, o personagem não deve se mexer mesmo.
@@ -329,20 +315,14 @@ void telajogo_entrada(Jogo * j){
 	}
     if(IsKeyDown(KEY_RIGHT) && IsKeyUp(KEY_LEFT)){
         mario->vel.x = 0.5;
-	    //printf("KEY_RIGHT\t");
 	}
     if(IsKeyDown(KEY_LEFT) && IsKeyUp(KEY_RIGHT)){
         mario->vel.x = -0.5;
-	    //printf("KEY_LEFT\t");
 	}
 	if(IsKeyPressed(KEY_A)){
 		salva_save(j);
+		jogo_troca_tela(j, TELA_MENU);
 	}
-
-    /*printf("\nMario Pos: [%.2f , %.2f] Vel: [%.2f , %.2f] \n",
-        mario->pos.x, mario->pos.y,
-        mario->vel.x, mario->vel.y
-    );*/
 
 }
 
@@ -357,8 +337,8 @@ void muda_velocidade(Fase * f, Vector2f * vel, Vector2f * pos, float pLargura, f
         }
     }
 }
-
-bool inimigo_na_posicao(Inimigo * inimigo, Vector2f * pos_mario){//pegar tiles acima do mario, ver se personagem está logo acima dele
+//pegar tiles acima do mario, ver se personagem está logo acima dele
+bool inimigo_na_posicao(Inimigo * inimigo, Vector2f * pos_mario){
     int xm_inicial = (int) (pos_mario->x - MARIO_LARGURA/2 );
 	int xm_final   = (int) (pos_mario->x + MARIO_LARGURA/2 );
 	double y_acima_m  = pos_mario->y - MARIO_ALTURA/2 - 0.1;
@@ -381,7 +361,7 @@ bool inimigo_na_posicao(Inimigo * inimigo, Vector2f * pos_mario){//pegar tiles a
 		return false;}
 
 
-	if ((int) y_acima_m == ((int) y_abaixo) +1){//MARACUTAIA pra funcionar
+	if ((int) y_acima_m == ((int) y_abaixo) +1){
         if((xi_inicial>= xm_inicial && xi_inicial<=xm_final) //se a posicao final do inimigo estiver entre as do mario
          || (xi_final>= xm_inicial && xi_final<=xm_final))// ou se a posicao inicial do inimigo estiver entre as do mario
            {
@@ -441,8 +421,7 @@ void cria_moeda(Fase * f, Moeda * moeda ){
 
 void muda_vulnerabilidade(Jogo *j, Inimigo * i){
 
-    if (i->vulnerabilidade == V_FURIOSO){// O CARANGUEJO TÁ INDO DIRETO DE FURIOSO PRA VULNERÁVEL
-        // E EU ACHO QUE É PORQUE A FUNÇÃO É EXECUTADA DUAS VEZES NA MESMA POSIÇÃO, VIDE OS PONTOS AO BATER NUM CARANGUEJO
+    if (i->vulnerabilidade == V_FURIOSO){
         i->vulnerabilidade = V_INVULNERAVEL;
         (j->pontos) +=10;
         i->vel.x = i->vel.x*0.7;// velocidade é 70% da velocidade original
@@ -461,9 +440,9 @@ void telajogo_logica(Jogo * j){
 
     Mario * mario = & f->mario;
 
-	// Aumenta o número de inimigos.
-
 	// NOTE: n_ticks está em 1/60 de segundo
+
+	// Aumenta o número de inimigos.
 	if(j->ticks % (f->delay * 60) == 0 && (f->n_caranguejos>0 || f->n_tartarugas>0 )){
 		int * n_inimigos_ptr = & j->tela_jogo->fase.n_inimigos;
 		cria_inimigo(& j->tela_jogo->fase, & j->tela_jogo->fase.inimigos[*n_inimigos_ptr]);
@@ -499,7 +478,7 @@ void telajogo_logica(Jogo * j){
         (j->num_power) +=1;
     }
 
-    // Muda velocidades
+    // Muda velocidades (mario, moedas e inimigos)
     muda_velocidade(f, & mario->vel, &mario->pos, MARIO_LARGURA, MARIO_ALTURA);
 
     for(int i = 0; i < f->n_moedas; ++i){
@@ -528,7 +507,7 @@ void telajogo_logica(Jogo * j){
              f->inimigos[i].vivo=false;
             (j->pontos) +=800;
         }
-        else if(j->ticks % 20 == 0 && mario_colide(mario->pos, f->inimigos[i].pos,largura,altura) && !(f->inimigos[i].vulnerabilidade==V_VULNERAVEL)){
+        else if(j->ticks % 25 == 0 && mario_colide(mario->pos, f->inimigos[i].pos,largura,altura) && !(f->inimigos[i].vulnerabilidade==V_VULNERAVEL)){
             mario->vidas -=1;
 
         }
@@ -553,7 +532,7 @@ void telajogo_logica(Jogo * j){
         }
 	}
 	if (fase_terminou == true){
-        if (j->num_fase==1 && mario->vidas>=0){
+        if (f->n_mapa==1 && mario->vidas>=0){
             j->num_fase=2;
             strcpy(j->nome_fase, "fase2.txt");
             jogo_troca_tela(j, TELA_JOGO);

@@ -10,7 +10,7 @@
 #include "textura.h"
 #include "assert.h"
 
-#include "recursos.h"// temporario
+#include "recursos.h"
 #include <unistd.h>
 
 // carrega os conteúdos do arquivo em f
@@ -31,6 +31,10 @@ bool load_fases(Fase * f, char * arquivo){
         for (int i_linha=0; i_linha < FASE_ALTURA; ++i_linha){
 			for(int i_char = 0; i_char < FASE_LARGURA; ++i_char ){
 				f->mapa[i_linha][i_char] = fgetc(entrada);
+				if (f->mapa[i_linha][i_char]=='m'){
+                    f->mario.pos =  (Vector2f){.x =i_char ,.y= i_linha};
+				}
+
 			}
         }
 		fscanf(entrada, "%d %d %d\n", &f->n_tartarugas, &f->n_caranguejos, &f->delay);
@@ -44,8 +48,6 @@ bool load_fases(Fase * f, char * arquivo){
 
 	// Configura o Mario
 	f->mario.vidas = 3;
-	f->mario.pos = (Vector2f) {10, 5};
-	//f->n_inimigos = f->n_caranguejos +f->n_tartarugas;
 
 	return true;
 }
@@ -116,15 +118,6 @@ void desenha_canos_i(Jogo * j){
 }
 
 void fases_desenha(Jogo * j){
-	// /* Teste: desenha as 4 bordas da tela. */
-	// for(int i = 0; i < FASE_ALTURA; ++i){
-	// 	tile_desenha(0,i, RED);
-	// 	tile_desenha(119,i, RED);
-	// }
-	// for(int i = 0; i < FASE_LARGURA; ++i){
-	// 	tile_desenha(i,0, RED);
-	// 	tile_desenha(i,27, RED);
-	// }
     Fase *f = &j->tela_jogo->fase;
 
     for (int y=0; y < FASE_ALTURA; y++){
@@ -145,15 +138,10 @@ void fases_desenha(Jogo * j){
 					Vector2f pos_tiles = {.x = x, .y = y};
 					Vector2 pos_screen = posfloat_para_tela(pos_tiles);
 					textura_desenha(j,T_POW, pos_screen);
-					tile_desenha(x,y, PINK);
 					break;
 				}
 				case 'p': {
 					tile_desenha(x,y, BLUE);
-					break;
-				}
-				case 'T': {
-					tile_desenha(x,y, PINK);
 					break;
 				}
 				case '1':  case '2': case '3':  case '4': case '5':  case '6': case '7':  case '8': case '9': {
@@ -173,7 +161,7 @@ void fases_desenha(Jogo * j){
 				}
 
 			}
-			//printf("\nf mapa int? %d", (int) f->mapa[y][x]>=0);
+
 			if((int)f->mapa[y][x]>=0 && (int)f->mapa[y][x]<=9){
                 Vector2f pos_tiles = {.x = 1.0 + x, .y = 1.0 + y};
                 Vector2 pos_screen = posfloat_para_tela(pos_tiles);
@@ -189,7 +177,7 @@ void fases_desenha(Jogo * j){
     }
 
 	desenha_vidas(j,  f->mario.vidas);
-	desenha_pontos(j, j->pontos);//desenha_pontos(j, f->mario.score);
+	desenha_pontos(j, j->pontos);
 	desenha_num_fase(j);
 	desenha_nome_jogador(j);
 	textura_desenha(j, CHAO, (Vector2){.x = 450, .y = 675});
@@ -253,8 +241,7 @@ bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltu
 	if(y_abaixo - ((int)y_abaixo) >= 0.25)
 		return false;
 
-	// Um Mario caindo infinitamente provavelmente seria ruim.
-	// Mas talvez ele tenha que cair quando morre (credo!)
+	// Pra impedir o mario de cair pra sempre
 	if(y_abaixo>= FASE_ALTURA-TILES_CHAO)
 		return true;
 
@@ -268,8 +255,6 @@ bool personagem_no_chao(Fase * fase, Vector2f * pos, float pLargura, float pAltu
 	return result;
 }
 
-// TODO: hardcode aleatório. Talvez ter um conjunto
-// unificado de defines futuramente seja mais prudente
 Rectangle mario_pos_to_screen_rect(Vector2 pos){
 	Rectangle mario_rect = {
 		.x = pos.x,

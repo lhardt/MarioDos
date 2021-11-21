@@ -1,12 +1,9 @@
 /**
  * MarioDos.
- *   tela_carrega.c - tela de entrada do arquivo.
+ *   tela_nome.c - tela que deixa o usuário digitar seu nome.
  *
  * (C) 2021 Ana Laura e Léo Hardt.
  *
- * Este arquivo contém as definições da tela de menu do jogo.
- * é nesta tela em que o jogo inicia, e nela o usuário pode
- * escolher jogar, carregar mapas, etc.
  */
 
 #include "jogo.h"

@@ -8,7 +8,6 @@ Vector2 posfloat_para_tela(Vector2f v){
 	return (Vector2){.x = (int) (v.x * TILE_LARGURA), .y = (int) (v.y * TILE_ALTURA) };
 }
 
-// TODO nome melhor?
 Rectangle get_spritesheet_pos(TexturaId textura){
 	switch(textura){
 		case T_LOGO:
@@ -77,9 +76,6 @@ void textura_desenha(Jogo * j, TexturaId textura, Vector2 pos){
 						};
 	rect_final.x -= rect_final.width / 2;
 	rect_final.y -= rect_final.height / 2;
-
-	// Tranquilo remover. É útil para testar se o carregamento da textura ta alinhado corretamente.
-	// DrawRectangleLines(rect_final.x, rect_final.y, rect_final.width, rect_final.height, GREEN);
 
 	DrawTextureTiled(j->spritesheet, rect_textura, rect_final, (Vector2){.x=0,.y=0}, 0.0f, SCALE, WHITE);
 }

@@ -143,10 +143,10 @@ bool scan_mario(FILE * arq, Mario * mario){
 	return success;
 }
 
-bool print_fase(FILE * arq, Fase fase){
+bool print_fase(FILE * arq, Fase fase, Jogo *j){
 	ASSERT(arq != NULL);
 
-	fprintf(arq,"Fase[%d,%d,%d", fase.n_mapa, fase.n_inimigos, fase.n_moedas);
+	fprintf(arq,"Fase[%d,%d,%d,%d,%d", fase.n_mapa, fase.n_inimigos, fase.n_moedas,j->pontos, j->num_fase );
 	fprintf(arq, ",%d,%d,%d\n", fase.n_tartarugas, fase.n_caranguejos, fase.delay);
 
 	print_mario(arq, fase.mario);
@@ -175,13 +175,13 @@ bool print_fase(FILE * arq, Fase fase){
 	fprintf(arq, "]\n");
 	return true;
 }
-bool scan_fase(FILE * arq, Fase * fase){
+bool scan_fase(FILE * arq, Fase * fase, Jogo *j){
 	ASSERT(arq != NULL && fase != NULL);
 
 	bool success = true;
 
 	success &=
-			(3 == fscanf(arq,"Fase[%d,%d,%d", &fase->n_mapa, &fase->n_inimigos, &fase->n_moedas))
+			(5 == fscanf(arq,"Fase[%d,%d,%d,%d,%d", &fase->n_mapa, &fase->n_inimigos, &fase->n_moedas, &j->pontos, &j->num_fase))
 		&&  (3 == fscanf(arq, ",%d,%d,%d\n", &fase->n_tartarugas, &fase->n_caranguejos, &fase->delay))
 		&&  scan_mario(arq, &fase->mario)
 		&&  (0 == fscanf(arq,"\n"))
@@ -217,7 +217,7 @@ bool salva_save(Jogo * j){
 	ASSERT(j != NULL && j->tipo_tela == TELA_JOGO);
 	FILE * arq = NULL;
 	bool sucesso = abre_arquivo("teste.state", &arq, false)
-				&& print_fase(arq, j->tela_jogo->fase);
+				&& print_fase(arq, j->tela_jogo->fase, j);
 
 	fclose(arq);
 
@@ -228,7 +228,7 @@ bool carrega_save(Jogo * j){
 	ASSERT(j != NULL && j->tipo_tela == TELA_JOGO);
 	FILE * arq = NULL;
 	bool sucesso = abre_arquivo("teste.state", &arq, true)
-			    && scan_fase(arq, & j->tela_jogo->fase);
+			    && scan_fase(arq, & j->tela_jogo->fase, j);
 
 	fclose(arq);
 
