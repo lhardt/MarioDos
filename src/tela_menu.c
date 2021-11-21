@@ -12,6 +12,8 @@
 #include "textura.h"
 #include "assert.h"
 
+#include "carregador.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h> // TEMPORARIO PRA DEBUG
@@ -46,7 +48,10 @@ void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
             jogo_troca_tela(j, TELA_NOME);
             break;
         case O_CONTINUAR:
-			jogo_troca_tela(j, TELA_NOME);
+            jogo_troca_tela(j, TELA_JOGO);
+
+            carrega_save(j);
+
 			break;
 		case O_CARREGAR_MAPA:
             j->num_fase =-1;

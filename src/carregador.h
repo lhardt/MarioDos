@@ -33,3 +33,6 @@ bool print_fase(FILE * arq, Fase fase);
 bool scan_fase(FILE * arq, Fase * fase);
 
 bool abre_arquivo(char * nomearq, FILE** out, bool is_leitura);
+
+bool salva_save(Jogo * j);
+bool carrega_save(Jogo * j);

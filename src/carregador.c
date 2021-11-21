@@ -212,3 +212,25 @@ bool scan_fase(FILE * arq, Fase * fase){
 
 	return success;
 }
+
+bool salva_save(Jogo * j){
+	ASSERT(j != NULL && j->tipo_tela == TELA_JOGO);
+	FILE * arq = NULL;
+	bool sucesso = abre_arquivo("teste.state", &arq, false)
+				&& print_fase(arq, j->tela_jogo->fase);
+
+	fclose(arq);
+
+	return sucesso;
+}
+
+bool carrega_save(Jogo * j){
+	ASSERT(j != NULL && j->tipo_tela == TELA_JOGO);
+	FILE * arq = NULL;
+	bool sucesso = abre_arquivo("teste.state", &arq, true)
+			    && scan_fase(arq, & j->tela_jogo->fase);
+
+	fclose(arq);
+
+	return sucesso;
+}

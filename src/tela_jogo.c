@@ -9,6 +9,7 @@
  * come�ar a jogar.
  */
 #include "jogo.h"
+#include "carregador.h"
 #include "textura.h"
 #include "assert.h"
 #include <stdlib.h>
@@ -333,6 +334,9 @@ void telajogo_entrada(Jogo * j){
     if(IsKeyDown(KEY_LEFT) && IsKeyUp(KEY_RIGHT)){
         mario->vel.x = -0.5;
 	    //printf("KEY_LEFT\t");
+	}
+	if(IsKeyPressed(KEY_A)){
+		salva_save(j);
 	}
 
     /*printf("\nMario Pos: [%.2f , %.2f] Vel: [%.2f , %.2f] \n",
