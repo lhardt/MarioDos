@@ -57,3 +57,35 @@ void teste_carrega_moeda(void) {
 	TEST_ASSERT_TRUE(moeda.coletada == moeda_cp.coletada);
 
 }
+
+void teste_carrega_inimigo(void) {
+	FILE * saida;
+	bool open = abre_arquivo("teste.state", &saida, false);
+
+	TEST_ASSERT_TRUE(open);
+
+	Inimigo inimigo_cp, inimigo = {
+		.tipo = T_CARANGUEJO,
+		.vivo = true,
+		.pos = (Vector2f) {.x = 15.5, .y = 18.8},
+		.vel = (Vector2f) {.x = 15.5, .y = 18.8},
+		.vulnerabilidade = V_VULNERAVEL,
+	};
+	bool success = print_inimigo(saida, inimigo);
+	TEST_ASSERT_TRUE(success);
+	fclose(saida);
+
+	success = abre_arquivo("teste.state", &saida, true);
+
+	success = scan_inimigo(saida, &inimigo_cp);
+
+	TEST_ASSERT_TRUE(inimigo.tipo == inimigo_cp.tipo);
+	TEST_ASSERT_TRUE(inimigo.vivo == inimigo_cp.vivo);
+	TEST_ASSERT_TRUE(inimigo.vel.x == inimigo_cp.vel.x);
+	TEST_ASSERT_TRUE(inimigo.vel.y == inimigo_cp.vel.y);
+	TEST_ASSERT_TRUE(inimigo.pos.x == inimigo_cp.pos.x);
+	TEST_ASSERT_TRUE(inimigo.pos.y == inimigo_cp.pos.y);
+	TEST_ASSERT_TRUE(inimigo.vulnerabilidade == inimigo_cp.vulnerabilidade);
+
+
+}

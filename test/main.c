@@ -18,5 +18,6 @@ int main(void) {
     RUN_TEST(test_grava_lista);
     RUN_TEST(teste_carrega_vec);
     RUN_TEST(teste_carrega_moeda);
+    RUN_TEST(teste_carrega_inimigo);
     return UNITY_END();
 }

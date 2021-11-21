@@ -23,4 +23,7 @@ bool print_vector2(FILE * arq, Vector2 vec);
 bool print_moeda(FILE * arq, Moeda moeda);
 bool scan_moeda(FILE * arq, Moeda * moeda);
 
+bool print_inimigo(FILE * arq, Inimigo inimigo);
+bool scan_inimigo(FILE * arq, Inimigo * inimigo);
+
 bool abre_arquivo(char * nomearq, FILE** out, bool is_leitura);

@@ -8,7 +8,6 @@
 
 #include <raylib.h>
 
-
 // out_str tem que ter no mínimo 17 bytes
 bool scan_assinatura(FILE* out, char * out_str){
 	struct tm assinado;
@@ -73,8 +72,7 @@ bool scan_vector2f(FILE * arq, Vector2f * vec){
 	ASSERT(arq != NULL && vec != NULL);
 	int num = fscanf(arq, "Vec2[%lf,%lf]", &vec->x, &vec->y);
 	return (num == 2);
-}\
-
+}
 
 bool print_moeda(FILE * arq, Moeda moeda){
 	ASSERT(arq != NULL);
@@ -82,6 +80,8 @@ bool print_moeda(FILE * arq, Moeda moeda){
 	print_vector2f(arq, moeda.pos);
 	print_vector2f(arq, moeda.vel);
 	fprintf(arq,",%d]", moeda.coletada? 1:0);
+
+	return true;
 }
 bool scan_moeda(FILE * arq, Moeda * moeda){
 	ASSERT(arq != NULL && moeda != NULL);
@@ -93,4 +93,31 @@ bool scan_moeda(FILE * arq, Moeda * moeda){
 				&& (1 == fscanf(arq, ",%d]", &coletada));
 	moeda->coletada = (coletada) ? true : false;
 	return success;
+}
+
+bool print_inimigo(FILE * arq, Inimigo inimigo){
+	ASSERT(arq != NULL);
+
+	fprintf(arq, "Inimigo[%d,%d,", inimigo.tipo, inimigo.vivo ? 1:0);
+	print_vector2f(arq, inimigo.pos);
+	print_vector2f(arq, inimigo.vel);
+	fprintf(arq, ",%d]", (int)inimigo.vulnerabilidade);
+
+	return true;
+}
+
+bool scan_inimigo(FILE * arq, Inimigo * inimigo){
+	ASSERT(arq != NULL);
+
+	int tmpvivo, tmpvul, tmptipo;
+	bool result = fscanf(arq, "Inimigo[%d,%d,]", &tmptipo, &tmpvivo)
+			   && scan_vector2f(arq, &inimigo->pos)
+			   && scan_vector2f(arq, &inimigo->vel)
+			   && fscanf(arq,",%d]", &tmpvul);
+
+	inimigo->vivo = (tmpvivo == 1);
+	inimigo->tipo = tmptipo;
+	inimigo->vulnerabilidade = tmpvul;
+
+	return result;
 }
