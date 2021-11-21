@@ -43,12 +43,15 @@ void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
         case O_NOVO_JOGO:
             strcpy(j->nome_fase, "fase1.txt");
             j->num_fase = 1;
+            j->pontos =0;
             jogo_troca_tela(j, TELA_NOME);
             break;
         case O_CONTINUAR:
 			jogo_troca_tela(j, TELA_NOME);
 			break;
 		case O_CARREGAR_MAPA:
+            j->pontos =0;
+            j->num_fase =-1;
 		    jogo_troca_tela(j, TELA_CARREGA);
 		    break;
 		case O_RANKING:
@@ -59,15 +62,6 @@ void menu_opcao_selecionada(Jogo * j, TelaMenuOption opcao){
 			TODO();
 			break;
 		case O_SAIR:
-			// A: O QUE A GENTE VAI FAZER NO FIM? EXIBER ALGUMA TELA "ADEUS" OU SÒ FECHAR?
-			// L: 'trabalhos futuros'? kkkkkkk
-
-			// Fazer uma animação é meio complicadinho. Da forma que eu vejo, dá pra
-			// fazer um float que represente a % da animação, e a cada frame (a cada
-			// telaxxx_logica), incrementar esse valor, e parar quando ele chegar a 100.
-			// Ai no desenha, fazer tipo:
-			// 			mario.y = marioy_inicial + (animacao.passo) * (marioy_final - marioy_inicial)
-			// Mas por enquanto, é uma mão KKK
 
 			j->sair=true;
 			break;

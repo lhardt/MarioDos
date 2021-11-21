@@ -151,7 +151,6 @@ void telajogo_inicia(Jogo * j){
 
 	srand(time(NULL));
 	//j->tela_jogo->fase.n_inimigos = 1;
-	j->pontos =0;
 
 	load_fases(& j->tela_jogo->fase, j->nome_fase);
 
@@ -478,6 +477,7 @@ void telajogo_logica(Jogo * j){
         }
 	}
 
+    // Muda velocidades
     muda_velocidade(f, & mario->vel, &mario->pos, MARIO_LARGURA, MARIO_ALTURA);
 
     for(int i = 0; i < f->n_moedas; ++i){
@@ -485,7 +485,6 @@ void telajogo_logica(Jogo * j){
         muda_velocidade(&j->tela_jogo->fase, & moeda->vel, & moeda->pos, MOEDA_LARGURA, MOEDA_ALTURA);
 
 	}
-
 
 	for(int i = 0; i < f->n_inimigos; ++i){
 		Inimigo * inimigo  = &j->tela_jogo->fase.inimigos[i];
@@ -498,6 +497,7 @@ void telajogo_logica(Jogo * j){
 
 	}
 
+    //Lógica colisão inimigos
 	for (int i=0; i< f->n_inimigos;i++){
         double largura, altura;
         tipo_largura_altura(&largura,&altura, &f->inimigos[i]);
@@ -512,6 +512,15 @@ void telajogo_logica(Jogo * j){
         }
 	}
 
+	//Lógica colisão moedas
+	for (int i=0; i< f->n_moedas;i++){
+        if (mario_colide(mario->pos, f->moedas[i].pos,MOEDA_LARGURA, MOEDA_ALTURA) && !(f->moedas[i].coletada)){
+            f->moedas[i].coletada = true;
+            (j->pontos) +=100;
+        }
+	}
+
+	//Lógica fase termina
 	int fase_terminou = true;
 	if ((f->n_caranguejos>0 || f->n_tartarugas>0) && mario->vidas>=0){
         fase_terminou = false;
