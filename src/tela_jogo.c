@@ -445,13 +445,14 @@ void telajogo_logica(Jogo * j){
              f->inimigos[i].vivo=false;
             (j->pontos) +=800;
         }
-        else if(mario_colide(mario->pos, f->inimigos[i].pos,largura,altura) && !(f->inimigos[i].vulnerabilidade==V_VULNERAVEL)){
-            //mario->vidas -=1; ALGUM PROBLEMA DE COLIDIR DEMAIS E TIRAR VIDAS DEMAIS AQUI
+        else if(j->ticks % 20 == 0 && mario_colide(mario->pos, f->inimigos[i].pos,largura,altura) && !(f->inimigos[i].vulnerabilidade==V_VULNERAVEL)){
+            mario->vidas -=1; //ALGUM PROBLEMA DE COLIDIR DEMAIS E TIRAR VIDAS DEMAIS AQUI
+
         }
 	}
 
 	int fase_terminou = true;
-	if (f->n_caranguejos>0 || f->n_tartarugas>0){
+	if ((f->n_caranguejos>0 || f->n_tartarugas>0) && mario->vidas>=0){
         fase_terminou = false;
 	}
 	for(int i=0;i< (f->n_inimigos);i++){
@@ -460,7 +461,7 @@ void telajogo_logica(Jogo * j){
         }
 	}
 	if (fase_terminou == true){
-        if (j->num_fase==1){
+        if (j->num_fase==1 && mario->vidas>=0){
             j->num_fase=2;
             strcpy(j->nome_fase, "fase2.txt");
             jogo_troca_tela(j, TELA_JOGO);
