@@ -451,8 +451,7 @@ void telajogo_logica(Jogo * j){
 	}
 
 	int fase_terminou = true;
-	// printf("n_inimigos %d n_c + n_t %d", f->n_inimigos, (f->n_caranguejos+f->n_tartarugas));
-	if (f->n_inimigos<(f->n_caranguejos+f->n_tartarugas)){
+	if (f->n_caranguejos>0 || f->n_tartarugas>0){
         fase_terminou = false;
 	}
 	for(int i=0;i< (f->n_inimigos);i++){
@@ -461,7 +460,6 @@ void telajogo_logica(Jogo * j){
         }
 	}
 	if (fase_terminou == true){
-            printf ("\nfase terminou");
         if (j->num_fase==1){
             j->num_fase=2;
             strcpy(j->nome_fase, "fase2.txt");

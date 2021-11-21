@@ -130,6 +130,17 @@ void fases_desenha(Jogo * j){
     for (int y=0; y < FASE_ALTURA; y++){
 		for (int x=0; x<FASE_LARGURA; x++){
 			switch(f->mapa[y][x]){
+			    case 'c':{
+					Vector2f pos_tiles = {.x = 1.0 + x, .y = 1.0 + y};
+					Vector2 pos_screen = posfloat_para_tela(pos_tiles);
+					//se for desenhar na parte direita da tela
+					if (x > FASE_LARGURA/2){
+						textura_desenha(j,D_CANO_S, pos_screen);
+					} else{
+						textura_desenha(j,E_CANO_S, pos_screen);
+					}
+					break;
+				}
 				case 'b': {
 					Vector2f pos_tiles = {.x = x, .y = y};
 					Vector2 pos_screen = posfloat_para_tela(pos_tiles);
@@ -145,6 +156,34 @@ void fases_desenha(Jogo * j){
 					tile_desenha(x,y, PINK);
 					break;
 				}
+				case '1':  case '2': case '3':  case '4': case '5':  case '6': case '7':  case '8': case '9': {
+                    Vector2f pos_tiles;
+                    Vector2 pos_screen;
+                    //se for desenhar na parte direita da tela
+                    if (x > FASE_LARGURA/2){
+                        pos_tiles = (Vector2f) {.x = 1.2 + x, .y = 1.0 + y};
+                        pos_screen = posfloat_para_tela(pos_tiles);
+                        textura_desenha(j,D_CANO_I, pos_screen);
+                    } else{
+                        pos_tiles = (Vector2f){.x = x, .y = 1.0 + y};
+                        pos_screen = posfloat_para_tela(pos_tiles);
+                        textura_desenha(j,E_CANO_I, pos_screen);
+                    }
+                    break;
+				}
+
+			}
+			//printf("\nf mapa int? %d", (int) f->mapa[y][x]>=0);
+			if((int)f->mapa[y][x]>=0 && (int)f->mapa[y][x]<=9){
+                Vector2f pos_tiles = {.x = 1.0 + x, .y = 1.0 + y};
+                Vector2 pos_screen = posfloat_para_tela(pos_tiles);
+                //se for desenhar na parte direita da tela
+                if (x > FASE_LARGURA/2){
+                    textura_desenha(j,D_CANO_I, pos_screen);
+                } else{
+                    textura_desenha(j,E_CANO_I, pos_screen);
+                }
+
 			}
 	    }
     }
@@ -153,9 +192,9 @@ void fases_desenha(Jogo * j){
 	desenha_pontos(j, j->pontos);//desenha_pontos(j, f->mario.score);
 	desenha_num_fase(j);
 	desenha_nome_jogador(j);
-	desenha_cano_s(j,7,5);
-	desenha_cano_s(j,112,5);
-	desenha_canos_i (j);
+	//desenha_cano_s(j,7,5);
+	//desenha_cano_s(j,112,5);
+	//desenha_canos_i (j);
 
 }
 
