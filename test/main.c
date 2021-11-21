@@ -19,5 +19,7 @@ int main(void) {
     RUN_TEST(teste_carrega_vec);
     RUN_TEST(teste_carrega_moeda);
     RUN_TEST(teste_carrega_inimigo);
+    RUN_TEST(teste_carrega_mario);
+    RUN_TEST(teste_carrega_fase);
     return UNITY_END();
 }

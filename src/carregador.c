@@ -121,3 +121,94 @@ bool scan_inimigo(FILE * arq, Inimigo * inimigo){
 
 	return result;
 }
+
+bool print_mario(FILE * arq, Mario mario){
+	ASSERT(arq != NULL);
+
+	fprintf(arq,"Mario[");
+	print_vector2f(arq,mario.pos);
+	print_vector2f(arq,mario.vel);
+	fprintf(arq,",%d,%d]", mario.score, mario.vidas);
+
+	return true;
+}
+bool scan_mario(FILE * arq, Mario * mario){
+	ASSERT(arq != NULL && mario != NULL);
+	bool success;
+
+	success = (0 == fscanf(arq, "Mario["))
+		   && scan_vector2f(arq, &mario->pos)
+		   && scan_vector2f(arq, &mario->vel)
+		   && (2 == fscanf(arq, ",%d,%d]", &mario->score, &mario->vidas));
+	return success;
+}
+
+bool print_fase(FILE * arq, Fase fase){
+	ASSERT(arq != NULL);
+
+	fprintf(arq,"Fase[%d,%d,%d", fase.n_mapa, fase.n_inimigos, fase.n_moedas);
+	fprintf(arq, ",%d,%d,%d\n", fase.n_tartarugas, fase.n_caranguejos, fase.delay);
+
+	print_mario(arq, fase.mario);
+
+	fprintf(arq,"\n");
+	fprintf(arq, "MOEDAS[");
+	for(int i = 0; i < fase.n_moedas; ++i){
+			fprintf(arq, "\n\t");
+			print_moeda(arq, fase.moedas[i]);
+	}
+	fprintf(arq, "\n]\n");
+
+	fprintf(arq,"INIMIGOS[");
+	for(int i = 0; i < fase.n_inimigos; ++i){
+			fprintf(arq,"\n\t");
+			print_inimigo(arq, fase.inimigos[i]);
+	}
+	fprintf(arq,"\n]\n");
+
+
+	for (int i_linha=0; i_linha < FASE_ALTURA; ++i_linha){
+		for(int i_char = 0; i_char < FASE_LARGURA; ++i_char ){
+			fputc(fase.mapa[i_linha][i_char], arq);
+		}
+	}
+	fprintf(arq, "]\n");
+	return true;
+}
+bool scan_fase(FILE * arq, Fase * fase){
+	ASSERT(arq != NULL && fase != NULL);
+
+	bool success = true;
+
+	success &=
+			(3 == fscanf(arq,"Fase[%d,%d,%d", &fase->n_mapa, &fase->n_inimigos, &fase->n_moedas))
+		&&  (3 == fscanf(arq, ",%d,%d,%d\n", &fase->n_tartarugas, &fase->n_caranguejos, &fase->delay))
+		&&  scan_mario(arq, &fase->mario)
+		&&  (0 == fscanf(arq,"\n"))
+		&&  (0 == fscanf(arq, "MOEDAS["));
+
+	for(int i = 0; success && i < fase->n_moedas; ++i){
+		success &= (0 == fscanf(arq, "\n\t"));
+		success &= scan_moeda(arq, &fase->moedas[i]);
+	}
+
+
+	success &= (0 == fscanf(arq, "\n]\n"))
+		    && (0 == fscanf(arq,"INIMIGOS["));
+
+
+	for(int i = 0; success && i < fase->n_inimigos; ++i){
+		success &= (0 == fscanf(arq, "\n\t"));
+		success &= scan_inimigo(arq, &fase->inimigos[i]);
+	}
+	success &= (0 == fscanf(arq,"\n]\n"));
+
+	for (int i_linha=0; i_linha < FASE_ALTURA; ++i_linha){
+		for(int i_char = 0; i_char < FASE_LARGURA; ++i_char ){
+			fase->mapa[i_linha][i_char] = fgetc(arq);
+		}
+	}
+	success &= (0 == fscanf(arq, "]\n"));
+
+	return success;
+}

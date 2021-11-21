@@ -26,4 +26,10 @@ bool scan_moeda(FILE * arq, Moeda * moeda);
 bool print_inimigo(FILE * arq, Inimigo inimigo);
 bool scan_inimigo(FILE * arq, Inimigo * inimigo);
 
+bool print_mario(FILE * arq, Mario mario);
+bool scan_mario(FILE * arq, Mario * mario);
+
+bool print_fase(FILE * arq, Fase fase);
+bool scan_fase(FILE * arq, Fase * fase);
+
 bool abre_arquivo(char * nomearq, FILE** out, bool is_leitura);
